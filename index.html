@@ -20,6 +20,8 @@
     <p class="subtitle">Lyssna, se bilden, skriv ordet och jämför med facit</p>
   </header>
 
+  <button id="revealBtn" class="primary reveal-main" aria-label="Visa rätt svar">👁 Visa ordet</button>
+
   <main class="card">
     <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
     <div class="counter"><span id="current">1</span> av <span id="total">8</span></div>
@@ -50,13 +52,13 @@
       <button class="primary" id="listenBtn" aria-label="Lyssna på ordet">🔊 Lyssna</button>
       <button id="repeatBtn" aria-label="Repetera ljudet">↻ Repetera</button>
       <button id="checkBtn" class="success" aria-label="Rätta ditt svar">✓ Rätta</button>
-      <button id="revealBtn" aria-label="Visa rätt svar">👁 Visa rätt svar</button>
+      <!-- revealBtn moved to header position -->
       <button id="shareBtn" aria-label="Dela appen">↗ Dela</button>
     </div>
 
     <div class="nav">
       <button id="prevBtn" aria-label="Föregående ord">← Bak</button>
-      <button id="nextBtn" aria-label="Nästa ord">Nästa →</button>
+      <button id="nextBtn" class="primary-next" aria-label="Nästa ord">Nästa →</button>
     </div>
 
     <p class="kbd-hint">

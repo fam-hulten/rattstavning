@@ -299,6 +299,36 @@ button.success:hover:not(:disabled) {
   color: var(--text);
 }
 
+/* Level 1: prominent reveal button + larger next button */
+.reveal-main {
+  display: block;
+  width: calc(100% - 3rem);
+  max-width: 440px;
+  margin: 0 auto 1.25rem;
+  padding: 1rem 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.28);
+}
+
+.reveal-main:hover {
+  box-shadow: 0 10px 28px rgba(16, 185, 129, 0.4);
+}
+
+.primary-next {
+  font-weight: 600;
+  font-size: 1.05rem;
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+}
+
+.primary-next:hover:not(:disabled) {
+  background: var(--primary-hover);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+}
+
 .error-state {
   text-align: center;
   color: var(--text-muted);
@@ -342,6 +372,8 @@ button.success:hover:not(:disabled) {
   .controls { grid-template-columns: 1fr; }
   .guess-input { font-size: 1.1rem; }
   h1 { font-size: 1.25rem; }
+  .reveal-main { width: calc(100% - 2rem); font-size: 1.1rem; padding: 0.9rem 1rem; }
+  .primary-next { padding: 1rem; font-size: 1.05rem; }
 }
 
 @media (prefers-color-scheme: dark) {
