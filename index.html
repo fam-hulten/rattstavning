@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="description" content="Stavningsträning - öva stavning med auditivt och visuellt stöd, jämför med facit">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Stavning">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>Stavningsträning</title>
+</head>
+<body>
+  <header>
+    <h1 id="title" contenteditable="true">Läxa för v. xx — Klass 4 Lejonskolan</h1>
+    <p class="subtitle">Lyssna, se bilden, skriv ordet och jämför med facit</p>
+  </header>
+
+  <main class="card">
+    <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+    <div class="counter"><span id="current">1</span> av <span id="total">8</span></div>
+
+    <div class="image-wrapper">
+      <img class="image-area" id="imageArea" alt="" src="">
+    </div>
+    <p class="hint" id="hint">Lyssna noga. Skriv ordet och jämför med facit.</p>
+
+    <div class="audio-indicator" id="audioIndicator" role="status" aria-live="polite">🔊 Spelar…</div>
+
+    <div class="input-row">
+      <input type="text"
+             id="guessInput"
+             class="guess-input"
+             placeholder="Skriv ordet här…"
+             autocomplete="off"
+             autocorrect="off"
+             autocapitalize="off"
+             spellcheck="false"
+             inputmode="text"
+             aria-label="Skriv ditt svar">
+    </div>
+
+    <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+
+    <div class="controls">
+      <button class="primary" id="listenBtn" aria-label="Lyssna på ordet">🔊 Lyssna</button>
+      <button id="repeatBtn" aria-label="Repetera ljudet">↻ Repetera</button>
+      <button id="checkBtn" class="success" aria-label="Rätta ditt svar">✓ Rätta</button>
+      <button id="revealBtn" aria-label="Visa rätt svar">👁 Visa rätt svar</button>
+      <button id="shareBtn" aria-label="Dela appen">↗ Dela</button>
+    </div>
+
+    <div class="nav">
+      <button id="prevBtn" aria-label="Föregående ord">← Bak</button>
+      <button id="nextBtn" aria-label="Nästa ord">Nästa →</button>
+    </div>
+
+    <p class="kbd-hint">
+      <span class="kbd">←</span> <span class="kbd">→</span> navigera ·
+      <span class="kbd">R</span> repetera ·
+      <span class="kbd">Enter</span> rätta ·
+      <span class="kbd">V</span> visa
+    </p>
+  </main>
+
+  <footer class="install-hint" id="installHint" hidden>
+    <p>💡 Tips: Lägg till på hemskärmen för att använda offline.</p>
+    <button id="installBtn" hidden>Lägg till</button>
+    <button id="dismissInstall" aria-label="Stäng">✕</button>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

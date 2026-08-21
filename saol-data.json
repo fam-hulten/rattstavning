@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "title": "Läxa för v. 34 — Klass 4 Lejonskolan",
+    "subtitle": "Lyssna, se bilden, skriv ordet och jämför med facit",
+    "school": "Lejonskolan",
+    "klass": "4"
+  },
+  "words": [
+    {
+      "id": "01",
+      "text": "boka",
+      "audio": "audio/01.mp3",
+      "image": "images/01.png",
+      "definition": "att reservera (en biljett, ett bord, en tid)",
+      "synonyms": ["reservera", "beställa"],
+      "pronunciation": "boo-ka"
+    },
+    {
+      "id": "02",
+      "text": "bocka",
+      "audio": "audio/02.mp3",
+      "image": "images/02.png",
+      "definition": "att böja sig framåt (hälsa, visa respekt)",
+      "synonyms": ["böja sig", "hälsa"],
+      "pronunciation": "bock-a"
+    },
+    {
+      "id": "03",
+      "text": "skäll",
+      "audio": "audio/03.mp3",
+      "image": "images/03.png",
+      "definition": "hund som skäller; ljudet en hund gör",
+      "synonyms": ["skall"],
+      "pronunciation": "skäll"
+    },
+    {
+      "id": "04",
+      "text": "skäl",
+      "audio": "audio/04.mp3",
+      "image": "images/04.png",
+      "definition": "anledning, orsak; svar på frågan varför",
+      "synonyms": ["orsak", "anledning"],
+      "pronunciation": "skäl"
+    },
+    {
+      "id": "05",
+      "text": "rycker",
+      "audio": "audio/05.mp3",
+      "image": "images/05.png",
+      "definition": "drar häftigt i något; gör en kort rörelse",
+      "synonyms": ["drar", "rycka"],
+      "pronunciation": "ryck-er"
+    },
+    {
+      "id": "06",
+      "text": "ryker",
+      "audio": "audio/06.mp3",
+      "image": "images/06.png",
+      "definition": "rök stiger upp; avger rök",
+      "synonyms": ["röker", "osar"],
+      "pronunciation": "ry-ker"
+    },
+    {
+      "id": "07",
+      "text": "grattis",
+      "audio": "audio/07.mp3",
+      "image": "images/07.png",
+      "definition": "gratulation, lyckönskning (t.ex. på födelsedag)",
+      "synonyms": ["gratulation", "lyckönskning"],
+      "pronunciation": "gratt-is"
+    },
+    {
+      "id": "08",
+      "text": "gratis",
+      "audio": "audio/08.mp3",
+      "image": "images/08.png",
+      "definition": "kostar inget, utan kostnad",
+      "synonyms": ["kostnadsfri", "fri"],
+      "pronunciation": "grat-is"
+    }
+  ]
+}
