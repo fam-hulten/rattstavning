@@ -22,6 +22,7 @@
   </header>
 
   <button id="revealBtn" class="primary reveal-main" aria-label="Visa rätt svar">👁 Visa ordet</button>
+  <button id="mode3sBtn" class="mode-btn" aria-label="Visa ordet i 3 sekunder">⏱ 3 sek</button>
 
   <main class="card">
     <div class="streak-counter" id="streakCounter" aria-label="Radda rätt">🔥 <span id="streakNum">0</span></div>
@@ -50,6 +51,11 @@
 
     <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
 
+    <div class="mode-toggle" id="modeToggle" aria-label="Läge">
+      <button class="mode-opt active" data-mode="paper">📝 Papper</button>
+      <button class="mode-opt" data-mode="app">⌨️ App</button>
+    </div>
+
     <div class="controls">
       <button class="primary" id="listenBtn" aria-label="Lyssna på ordet">🔊 Lyssna</button>
       <button id="repeatBtn" aria-label="Repetera ljudet">↻ Repetera</button>
@@ -77,6 +83,7 @@
     <button id="dismissInstall" aria-label="Stäng">✕</button>
   </footer>
 
+  <canvas class="confetti-canvas" id="confettiCanvas"></canvas>
   <script src="app.js"></script>
 </body>
 </html>

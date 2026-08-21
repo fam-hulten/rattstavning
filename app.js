@@ -36,8 +36,14 @@ const shuffleBtn = document.getElementById('shuffleBtn');
 const streakCounter = document.getElementById('streakCounter');
 const streakNum = document.getElementById('streakNum');
 const progressText = document.getElementById('progressText');
+const mode3sBtn = document.getElementById('mode3sBtn');
+const modeToggle = document.getElementById('modeToggle');
+const inputRow = document.querySelector('.input-row');
+const confettiCanvas = document.getElementById('confettiCanvas');
 
 let streak = 0;
+let appMode = 'paper'; // 'paper' or 'app'
+let threeSecondTimer = null;
 
 const allButtons = () => [listenBtn, repeatBtn, checkBtn, revealBtn, shareBtn, prevBtn, nextBtn];
 
@@ -295,6 +301,114 @@ dismissInstallBtn?.addEventListener('click', () => {
 });
 
 shuffleBtn?.addEventListener('click', shuffleWords);
+
+// Nivå 3: 3-sekunder visningsläge
+mode3sBtn?.addEventListener('click', () => {
+  if (threeSecondTimer) return; // redan igång
+  const word = words[currentIndex];
+  const orig = feedbackEl.innerHTML;
+  const origClass = feedbackEl.className;
+  feedbackEl.innerHTML = `<strong style="font-size:1.4rem">${escapeHtml(word.text)}</strong>`;
+  feedbackEl.className = 'feedback feedback-reveal';
+  mode3sBtn.disabled = true;
+  threeSecondTimer = setTimeout(() => {
+    feedbackEl.innerHTML = orig || '';
+    feedbackEl.className = origClass || 'feedback';
+    threeSecondTimer = null;
+    mode3sBtn.disabled = false;
+  }, 3000);
+});
+
+// Nivå 3: Toggle papper/app
+modeToggle?.addEventListener('click', e => {
+  const opt = e.target.closest('.mode-opt');
+  if (!opt) return;
+  appMode = opt.dataset.mode;
+  modeToggle.querySelectorAll('.mode-opt').forEach(b => b.classList.remove('active'));
+  opt.classList.add('active');
+  if (appMode === 'paper') {
+    inputRow.style.display = 'none';
+  } else {
+    inputRow.style.display = '';
+    guessInput.focus();
+  }
+});
+
+// Nivå 3: Initiera papper-läget
+inputRow.style.display = 'none';
+
+// Nivå 3: Konfetti vid alla rätt
+function launchConfetti() {
+  const ctx = confettiCanvas.getContext('2d');
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+  const colors = ['#4f46e5','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
+  const pieces = Array.from({length: 120}, () => ({
+    x: Math.random() * confettiCanvas.width,
+    y: -20,
+    w: Math.random() * 10 + 5,
+    h: Math.random() * 6 + 3,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    vx: (Math.random() - 0.5) * 4,
+    vy: Math.random() * 3 + 2,
+    rot: Math.random() * 360,
+    rotV: (Math.random() - 0.5) * 8,
+  }));
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    pieces.forEach(p => {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.08;
+      p.rot += p.rotV;
+    });
+    frame++;
+    if (frame < 180) requestAnimationFrame(draw);
+    else ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  }
+  draw();
+}
+
+// Trigger confetti when last word is answered correctly
+function checkGuess() {
+  const word = words[currentIndex];
+  const guess = normalize(guessInput.value);
+  if (!guess) {
+    feedbackEl.textContent = 'Skriv ditt svar först';
+    feedbackEl.className = 'feedback feedback-hint';
+    return;
+  }
+  const correct = normalize(word.text);
+  if (guess === correct) {
+    feedbackEl.innerHTML = `✓ Rätt stavat! <strong>${escapeHtml(word.text)}</strong>`;
+    feedbackEl.className = 'feedback feedback-correct';
+    revealBtn.textContent = '👁 Visa rätt svar';
+    revealed = false;
+    streak++;
+    streakNum.textContent = streak;
+    streakCounter.classList.add('visible');
+    streakCounter.classList.remove('pulse');
+    void streakCounter.offsetWidth;
+    streakCounter.classList.add('pulse');
+    setTimeout(() => streakCounter.classList.remove('pulse'), 500);
+    // Nivå 3: Konfetti när sista ordet är rätt
+    if (streak === words.length) {
+      setTimeout(launchConfetti, 300);
+    }
+  } else {
+    feedbackEl.innerHTML = `✗ Inte rätt. Du skrev: <strong>${escapeHtml(guessInput.value.trim())}</strong>`;
+    feedbackEl.className = 'feedback feedback-wrong';
+    streak = 0;
+    streakCounter.classList.remove('visible');
+  }
+}
 
 // Reset streak on navigate away from current word
 function updateUI() {
