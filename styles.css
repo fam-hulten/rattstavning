@@ -151,6 +151,23 @@ h1[contenteditable]:focus { background: var(--primary-soft); box-shadow: 0 0 0 2
   opacity: 1;
 }
 
+/* P1: Felbokstav-markering vid stavningsfel */
+.wrong-letter {
+  background-color: #fee2e2;
+  color: #dc2626;
+  text-decoration: line-through;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.missing-letter {
+  background-color: #dcfce7;
+  color: #16a34a;
+  text-decoration: underline;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
 /* Nivå 3: Feedback animations */
 @keyframes feedbackPop {
   0% { transform: scale(0.8); opacity: 0; }

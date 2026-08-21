@@ -163,8 +163,32 @@ function checkGuess() {
     void streakCounter.offsetWidth; // reflow
     streakCounter.classList.add('pulse');
     setTimeout(() => streakCounter.classList.remove('pulse'), 500);
+    // Nivå 3: Konfetti när sista ordet är rätt
+    if (streak === words.length) {
+      setTimeout(launchConfetti, 300);
+    }
   } else {
-    feedbackEl.innerHTML = `✗ Inte rätt. Du skrev: <strong>${escapeHtml(guessInput.value.trim())}</strong>`;
+    // P1-förbättring: visa rätt svar med markering vid fel
+    const guessText = guessInput.value.trim();
+    const correctText = word.text;
+    let highlightedGuess = '';
+    let i = 0;
+    // Markera felaktiga bokstäver
+    while (i < guessText.length && i < correctText.length) {
+      if (guessText[i].toLowerCase() === correctText[i].toLowerCase()) {
+        highlightedGuess += escapeHtml(guessText[i]);
+      } else {
+        highlightedGuess += `<span class="wrong-letter">${escapeHtml(guessText[i])}</span>`;
+      }
+      i++;
+    }
+    // Lägg till extra/mindre bokstäver
+    if (guessText.length > correctText.length) {
+      highlightedGuess += `<span class="wrong-letter">${escapeHtml(guessText.slice(i))}</span>`;
+    } else if (guessText.length < correctText.length) {
+      highlightedGuess += `<span class="missing-letter">${escapeHtml(correctText.slice(i))}</span>`;
+    }
+    feedbackEl.innerHTML = `✗ Inte rätt.<br>Du skrev: <strong>${highlightedGuess}</strong><br>Rätt: <strong>${escapeHtml(correctText)}</strong>`;
     feedbackEl.className = 'feedback feedback-wrong';
     streak = 0;
     streakCounter.classList.remove('visible');
@@ -245,8 +269,8 @@ async function shareApp() {
 }
 
 // Events
-listenBtn.addEventListener('click', playAudio);
-repeatBtn.addEventListener('click', playAudio);
+listenBtn.addEventListener('click', playSentenceAudio);
+repeatBtn.addEventListener('click', playSentenceAudio);
 checkBtn.addEventListener('click', checkGuess);
 revealBtn.addEventListener('click', reveal);
 shareBtn.addEventListener('click', shareApp);
@@ -318,6 +342,40 @@ mode3sBtn?.addEventListener('click', () => {
     mode3sBtn.disabled = false;
   }, 3000);
 });
+
+// Nivå 3: TTS med hel mening via Web Speech API (P1-förbättring)
+function playSentenceAudio() {
+  const word = words[currentIndex];
+  if (!word || !word.text) return;
+  if (!('speechSynthesis' in window)) {
+    audioIndicator.textContent = '⚠️ TTS stöds inte i denna webbläsare';
+    audioIndicator.classList.add('error');
+    return;
+  }
+  // Avbryt ev. pågående uppläsning
+  speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance('skriv ordet ' + word.text);
+  utterance.lang = 'sv-SE';
+  utterance.rate = 0.85;
+  utterance.pitch = 1.1;
+  // Försök hitta en svensk röst
+  const voices = speechSynthesis.getVoices();
+  const svVoice = voices.find(v => v.lang.startsWith('sv')) || voices.find(v => v.lang.startsWith('en'));
+  if (svVoice) utterance.voice = svVoice;
+  audioIndicator.textContent = '🔊 Spelar mening…';
+  audioIndicator.classList.remove('error');
+  audioIndicator.classList.add('playing');
+  utterance.onend = () => {
+    audioIndicator.classList.remove('playing');
+    audioIndicator.textContent = '';
+  };
+  utterance.onerror = () => {
+    audioIndicator.classList.remove('playing');
+    audioIndicator.textContent = '⚠️ TTS misslyckades';
+    audioIndicator.classList.add('error');
+  };
+  speechSynthesis.speak(utterance);
+}
 
 // Nivå 3: Toggle papper/app
 modeToggle?.addEventListener('click', e => {
