@@ -63,6 +63,11 @@ function showError(msg) {
 }
 
 function init() {
+  // Slumpa ordning en gång per session (Level 1 — Fisher-Yates)
+  for (let i = words.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [words[i], words[j]] = [words[j], words[i]];
+  }
   totalSpan.textContent = words.length;
   renderProgress();
   updateUI();
