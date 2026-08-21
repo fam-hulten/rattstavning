@@ -18,13 +18,15 @@
   <header>
     <h1 id="title" contenteditable="true">Läxa för v. xx — Klass 4 Lejonskolan</h1>
     <p class="subtitle">Lyssna, se bilden, skriv ordet och jämför med facit</p>
+    <button id="shuffleBtn" class="shuffle-btn" aria-label="Blanda om orden">🔀 Blanda om</button>
   </header>
 
   <button id="revealBtn" class="primary reveal-main" aria-label="Visa rätt svar">👁 Visa ordet</button>
 
   <main class="card">
+    <div class="streak-counter" id="streakCounter" aria-label="Radda rätt">🔥 <span id="streakNum">0</span></div>
     <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
-    <div class="counter"><span id="current">1</span> av <span id="total">8</span></div>
+    <div class="counter"><span id="current">1</span> av <span id="total">8</span> — <span id="progressText">0%</span></div>
 
     <div class="image-wrapper">
       <img class="image-area" id="imageArea" alt="" src="">

@@ -32,6 +32,12 @@ const nextBtn = document.getElementById('nextBtn');
 const installHint = document.getElementById('installHint');
 const installBtn = document.getElementById('installBtn');
 const dismissInstallBtn = document.getElementById('dismissInstall');
+const shuffleBtn = document.getElementById('shuffleBtn');
+const streakCounter = document.getElementById('streakCounter');
+const streakNum = document.getElementById('streakNum');
+const progressText = document.getElementById('progressText');
+
+let streak = 0;
 
 const allButtons = () => [listenBtn, repeatBtn, checkBtn, revealBtn, shareBtn, prevBtn, nextBtn];
 
@@ -73,6 +79,20 @@ function init() {
   updateUI();
 }
 
+function shuffleWords() {
+  // Fisher-Yates — ny slumpad ordning från början
+  for (let i = words.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [words[i], words[j]] = [words[j], words[i]];
+  }
+  currentIndex = 0;
+  updateUI();
+  playAudio();
+  // Animate shuffle button briefly
+  shuffleBtn.textContent = '✅';
+  setTimeout(() => { shuffleBtn.textContent = '🔀 Blanda om'; }, 800);
+}
+
 function renderProgress() {
   progressBar.innerHTML = '';
   words.forEach((_, i) => {
@@ -82,36 +102,12 @@ function renderProgress() {
     if (i === currentIndex) dot.classList.add('active');
     progressBar.appendChild(dot);
   });
+  // Nivå 3: Progress percentage
+  const pct = words.length ? Math.round((currentIndex / words.length) * 100) : 0;
+  progressText.textContent = pct + '%';
 }
 
-function updateUI() {
-  const word = words[currentIndex];
-  currentSpan.textContent = currentIndex + 1;
-  revealed = false;
-  feedbackEl.textContent = '';
-  feedbackEl.className = 'feedback';
-  guessInput.value = '';
-  guessInput.disabled = false;
-  revealBtn.textContent = '👁 Visa rätt svar';
 
-  // Image: support either file path (preferred) or emoji fallback
-  if (word.image && /\.(png|jpg|jpeg|webp|gif|svg)$/i.test(word.image)) {
-    imageArea.src = word.image;
-    imageArea.alt = word.text;
-    imageArea.classList.remove('placeholder');
-  } else {
-    imageArea.removeAttribute('src');
-    imageArea.alt = word.image || '📖';
-    imageArea.classList.add('placeholder');
-  }
-
-  audioIndicator.classList.remove('playing', 'error');
-  audioIndicator.textContent = '';
-  prevBtn.disabled = currentIndex === 0;
-  nextBtn.disabled = currentIndex === words.length - 1;
-  renderProgress();
-  guessInput.focus();
-}
 
 function playAudio() {
   const word = words[currentIndex];
@@ -153,9 +149,19 @@ function checkGuess() {
     feedbackEl.className = 'feedback feedback-correct';
     revealBtn.textContent = '👁 Visa rätt svar';
     revealed = false;
+    // Nivå 3: Streak
+    streak++;
+    streakNum.textContent = streak;
+    streakCounter.classList.add('visible');
+    streakCounter.classList.remove('pulse');
+    void streakCounter.offsetWidth; // reflow
+    streakCounter.classList.add('pulse');
+    setTimeout(() => streakCounter.classList.remove('pulse'), 500);
   } else {
     feedbackEl.innerHTML = `✗ Inte rätt. Du skrev: <strong>${escapeHtml(guessInput.value.trim())}</strong>`;
     feedbackEl.className = 'feedback feedback-wrong';
+    streak = 0;
+    streakCounter.classList.remove('visible');
   }
 }
 
@@ -178,16 +184,30 @@ function reveal() {
 
 function nextWord() {
   if (currentIndex < words.length - 1) {
-    currentIndex++;
-    updateUI();
-    playAudio();
+    const card = document.querySelector('.card');
+    card.classList.add('slide-out-left');
+    setTimeout(() => {
+      currentIndex++;
+      updateUI();
+      playAudio();
+      card.classList.remove('slide-out-left');
+      card.classList.add('slide-in');
+      setTimeout(() => card.classList.remove('slide-in'), 300);
+    }, 250);
   }
 }
 
 function prevWord() {
   if (currentIndex > 0) {
-    currentIndex--;
-    updateUI();
+    const card = document.querySelector('.card');
+    card.classList.add('slide-out-right');
+    setTimeout(() => {
+      currentIndex--;
+      updateUI();
+      card.classList.remove('slide-out-right');
+      card.classList.add('slide-in');
+      setTimeout(() => card.classList.remove('slide-in'), 300);
+    }, 250);
   }
 }
 
@@ -273,6 +293,42 @@ installBtn?.addEventListener('click', async () => {
 dismissInstallBtn?.addEventListener('click', () => {
   installHint.hidden = true;
 });
+
+shuffleBtn?.addEventListener('click', shuffleWords);
+
+// Reset streak on navigate away from current word
+function updateUI() {
+  const word = words[currentIndex];
+  currentSpan.textContent = currentIndex + 1;
+  revealed = false;
+  feedbackEl.textContent = '';
+  feedbackEl.className = 'feedback';
+  guessInput.value = '';
+  guessInput.disabled = false;
+  revealBtn.textContent = '👁 Visa rätt svar';
+
+  // Reset streak on word navigation
+  streak = 0;
+  streakCounter.classList.remove('visible');
+
+  // Image: support either file path (preferred) or emoji fallback
+  if (word.image && /\.(png|jpg|jpeg|webp|gif|svg)$/i.test(word.image)) {
+    imageArea.src = word.image;
+    imageArea.alt = word.text;
+    imageArea.classList.remove('placeholder');
+  } else {
+    imageArea.removeAttribute('src');
+    imageArea.alt = word.image || '📖';
+    imageArea.classList.add('placeholder');
+  }
+
+  audioIndicator.classList.remove('playing', 'error');
+  audioIndicator.textContent = '';
+  prevBtn.disabled = currentIndex === 0;
+  nextBtn.disabled = currentIndex === words.length - 1;
+  renderProgress();
+  guessInput.focus();
+}
 
 // Service worker registration
 if ('serviceWorker' in navigator) {
