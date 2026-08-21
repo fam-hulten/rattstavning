@@ -33,7 +33,10 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2.5rem 1.5rem;
+  padding-top: calc(2.5rem + env(safe-area-inset-top));
+  padding-right: 1.5rem;
+  padding-bottom: 2.5rem;
+  padding-left: 1.5rem;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -327,7 +330,12 @@ button.success:hover:not(:disabled) {
 }
 
 @media (max-width: 480px) {
-  body { padding: 1.5rem 1rem; }
+  body {
+    padding-top: calc(1.5rem + env(safe-area-inset-top));
+    padding-right: 1rem;
+    padding-bottom: 1.5rem;
+    padding-left: 1rem;
+  }
   .card { padding: 1.75rem 1.25rem 1.5rem; }
   .image-area { max-width: 200px; max-height: 150px; }
   .image-wrapper { min-height: 160px; }
