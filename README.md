@@ -59,13 +59,14 @@ För varje nytt ord behövs:
 
 ## Generera nya ljudfiler
 
-Ljudfilerna kan genereras med valfri TTS (t.ex. OpenAI TTS, ElevenLabs, Google Cloud TTS). För svenska barn-stavning rekommenderas:
+Ljudfilerna genereras med **MiniMax TTS API**, röst `Swedish_male_1_v1` (samma röst genom hela appen — Lyssna/Repetera-knapparna spelar MP3-filen direkt, ingen webbläsar-TTS, för att undvika röst-blandning).
 
-- **Röst:** kvinnlig, varm, tydlig (t.ex. OpenAI "nova")
-- **Tempo:** normal till långsamt (~0.9x)
-- **Format:** mp3, 64-128 kbps
+- **Röst:** `Swedish_male_1_v1` (manlig, tydlig svenska)
+- **Tempo:** normal
+- **Format:** mp3, 64–128 kbps
+- **Filnamn:** `audio/<id>.mp3` där `<id>` matchar word.id (t.ex. `audio/01.mp3`)
 
-Filnamn: `audio/<id>.mp3` där `<id>` matchar word.id (t.ex. `audio/01.mp3`).
+**Viktigt:** Om du byter röst måste alla 8 filer bytas — annars blir det röst-blandning mellan orden. Verifiera att alla låter identiskt innan deploy.
 
 ## Generera nya bilder
 

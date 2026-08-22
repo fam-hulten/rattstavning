@@ -1,6 +1,6 @@
 # Stavningsträning — Plan & Status
 
-Senast uppdaterad: 2026-08-21 10:40 UTC (av Lilly)
+Senast uppdaterad: 2026-08-22 05:46 UTC (av Lilly)
 
 ## 🎯 Mål (Johanna-direktiv 2026-08-21)
 
@@ -8,7 +8,7 @@ Senast uppdaterad: 2026-08-21 10:40 UTC (av Lilly)
 2. **Skriva på papper** är huvudsyftet — appen ska stödja "se ord → skriv på papper"
 3. Sekundärt: skriva i appen (valfritt)
 
-## 📊 Status just nu (2026-08-21 10:40)
+## 📊 Status just nu (2026-08-22 05:46)
 
 ### 🟢 Nivå 1 — KLAR (commit `0c27d38`)
 - ✅ "Visa ordet"-knappen flyttad till toppen (prominent, grön, stor)
@@ -32,25 +32,32 @@ Senast uppdaterad: 2026-08-21 10:40 UTC (av Lilly)
 - ✅ Lade till Fisher-Yates i `init()` och deployade
 - Verifiering: 3 olika laddningar ger 3 olika ordningar
 
-### ⏳ Nivå 3 — INTE PÅBÖRJAD (planerad)
-- ⏳ Dölj input-fält som default, visa bara vid behov (toggle?)
-- ⏳ "Blanda om"-knapp för ny ordning
-- ⏳ Smooth animationer (slide/fade mellan ord)
-- � Streak/progress-feedback (efter X ord rätt)
-- ⏳ Better feedback (correct/wrong animationer)
-- ⏳ Toggle "Skriv på papper" / "Skriv i app"
+### 🟢 Nivå 3 — KLAR (commits `aa796c9`, `3d68364`, `e7f1d70`)
+- ✅ "Blanda om"-knapp i header (Fisher-Yates, ny ordning varje gång)
+- ✅ Slide/fade-transitions mellan ord
+- ✅ Correct/wrong-feedback med animation (pop + shake)
+- ✅ Streak-räknare (🔥-badge, pulse på varje rätt)
+- ✅ Toggle "Papper" / "App" (input-fält dolt på papper-default)
+- ✅ "Visa ordet i 3 sekunder"-läge (memori-träning)
+- ✅ Progress-bar med procent + prickar (0% → 100%)
+- ✅ Konfetti när alla ord rätt (streak === words.length)
+
+### 🐛 Bugfixar (commit `e7f1d70`, 2026-08-22)
+- ✅ **Lyssna/Repetera spelade webbläsar-TTS** (efter fd5d42a) — nu tillbaka till MP3-ljudfilen (MiniMax Swedish_male_1_v1, samma röst som bilden visar)
+- ✅ **Progress 88% på 8/8** — off-by-one, ändrat till `(currentIndex + 1) / words.length`
+- ✅ **Ny "Öva igen"-knapp** längst ner — startar om med ny blandning, extra prominent (grön, pulserande) på sista bilden
 
 ## 📜 Commit-historik (senaste 8)
 
 ```
+e7f1d70 fix(voice): Lyssna/Repetera spelar nu ljudfilen (inte webbläsar-TTS)
+fd5d42a P1 förbättringar: Web Speech API TTS (hel mening) + felbokstav-markering
+aa796c9 Nivå 3 steg 6-8: toggle papper/app, 3-sek visning, konfetti
+3d68364 Nivå 3 steg 1-5: blanda-om, progress-procent, slide-transitions, feedback-animationer, streak-räknare
+e4c5bf0 docs(PLAN): uppdatera med aktuell status (Nivå 1+2 KLAR, Nivå 3 planerad)
 7de0239 fix(shuffle): lägg till Fisher-Yates slumpning i init()
 a561855 fix(mobile): bumpa SW cache-version v1 → v2
 667fde1 fix(mobile): bumpa styles.css cache-buster v2 → v3
-0555828 fix(mobile): komprimera layout för iPhone
-0c27d38 feat(Level 1): visa-knappen överst, slumpad ordning, swipe-nav
-a256431 fix(mobile): cache-buster på styles.css
-02efb55 fix(mobile): iOS safe-area-inset-top + black-translucent
-7c6a21b feat: stavningstränare PWA med 8 ord (v.34)
 ```
 
 ## 🧪 Test-plan
@@ -165,7 +172,35 @@ document.addEventListener('touchend', e => {
 - **Branch:** main
 - **GH Pages:** https://fam-hulten.github.io/rattstavning/
 - **Auto-deploy:** aktiverat (main branch, root)
-- **Cache-strategi:** Service Worker v2 + cache-buster v3 på styles.css
+- **Cache-strategi:** Service Worker v3 + cache-buster v4 på styles.css
+
+## 📅 Veckorutin för ny läxa (när Johanna byter ordlista)
+
+1. **Bestäm orden** (8 st brukar — be Johanna om listan)
+2. **Generera MP3-filer** med MiniMax TTS, röst `Swedish_male_1_v1`:
+   - En MP3 per ord, filnamn `audio/<id>.mp3` (id = "01"–"08")
+   - Verifiera att alla låter likadant (samma röst, samma volym)
+3. **Generera bilder** (eller emoji-fallback) — samma stil som tidigare
+4. **Uppdatera `saol-data.json`**:
+   - `meta.title` → "Läxa för v. XX — Klass 4 Lejonskolan"
+   - Varje ord: `id`, `text`, `audio`, `image`, ev. `definition`/`synonyms`/`pronunciation`
+5. **Snabb-validering** innan push:
+   ```bash
+   cd rattstavning && for id in 01 02 03 04 05 06 07 08; do
+     test -f audio/$id.mp3 || echo "MISSING: audio/$id.mp3"
+     test -f images/$id.png || echo "MISSING: images/$id.png"
+   done
+   python3 -c "import json; json.load(open('saol-data.json'))" && echo "JSON OK"
+   node -c app.js && echo "JS OK"
+   ```
+6. **Commit + push** till `main` → auto-deploy till GH Pages
+7. **Testa på iPhone**: stäng PWA, öppna igen (ny SW laddas), verifiera alla 8 ord spelas med rätt röst
+
+### Cache-bust-regler
+- `app.js` ändrad → bumpa `sw.js` `CACHE_NAME` (v3 → v4)
+- `styles.css` ändrad → bumpa `?v=N` i `index.html` (v4 → v5)
+- `index.html` ändrad → bumpa `sw.js` `CACHE_NAME`
+- `saol-data.json` ändrad → INGEN cache-bust behövs (fetchas med `cache: 'no-store'`)
 
 ## 🔧 Nivå 3 — Detaljerad plan
 
