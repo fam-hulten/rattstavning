@@ -410,6 +410,51 @@ button.success:hover:not(:disabled) {
   box-shadow: 0 6px 20px rgba(16, 185, 129, 0.28);
 }
 
+/* Nivå 3+: "Öva igen"-knapp — längst ner, alltid synlig, prominent på sista bilden */
+.practice-again-btn {
+  display: block;
+  width: 100%;
+  margin: 1.25rem 0 0.5rem;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: var(--text-muted);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.practice-again-btn:hover {
+  background: #e2e8f0;
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
+/* Prominent variant — aktiveras på sista bilden */
+.practice-again-btn.prominent {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  font-size: 1.1rem;
+  padding: 1rem;
+  animation: practiceAgainPulse 2s ease-in-out infinite;
+}
+
+.practice-again-btn.prominent:hover {
+  background: var(--success-hover);
+  border-color: var(--success-hover);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+  transform: translateY(-2px);
+}
+
+@keyframes practiceAgainPulse {
+  0%, 100% { box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); }
+  50% { box-shadow: 0 4px 24px rgba(16, 185, 129, 0.65); }
+}
+
 /* Nivå 3: Mode buttons (3s + toggle) */
 .mode-btn {
   display: inline-flex;
@@ -568,6 +613,8 @@ button.success:hover:not(:disabled) {
   .kbd-hint { display: none; }  /* Level 2: dolj kbd-hint på mobil */
   .reveal-main { width: calc(100% - 1.5rem); font-size: 1rem; padding: 0.7rem 0.8rem; margin-bottom: 0.6rem; }
   .primary-next { padding: 0.7rem; font-size: 0.95rem; }
+  .practice-again-btn { margin-top: 0.8rem; padding: 0.7rem; font-size: 0.95rem; }
+  .practice-again-btn.prominent { padding: 0.85rem; font-size: 1rem; }
   h1 { font-size: 1.1rem; margin-bottom: 0.2rem; }
   .subtitle { font-size: 0.85rem; }
   header { margin-bottom: 0.6rem; }

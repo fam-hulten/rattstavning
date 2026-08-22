@@ -33,6 +33,7 @@ const installHint = document.getElementById('installHint');
 const installBtn = document.getElementById('installBtn');
 const dismissInstallBtn = document.getElementById('dismissInstall');
 const shuffleBtn = document.getElementById('shuffleBtn');
+const practiceAgainBtn = document.getElementById('practiceAgainBtn');
 const streakCounter = document.getElementById('streakCounter');
 const streakNum = document.getElementById('streakNum');
 const progressText = document.getElementById('progressText');
@@ -99,6 +100,20 @@ function shuffleWords() {
   setTimeout(() => { shuffleBtn.textContent = '🔀 Blanda om'; }, 800);
 }
 
+// Nivå 3+: "Öva igen" — samma som shuffleWords men separat knapp
+// (alltid synlig längst ner, extra prominent på sista bilden)
+function practiceAgain() {
+  for (let i = words.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [words[i], words[j]] = [words[j], words[i]];
+  }
+  currentIndex = 0;
+  updateUI();
+  playAudio();
+  practiceAgainBtn.textContent = '✅ Startar om…';
+  setTimeout(() => { practiceAgainBtn.textContent = '🔄 Öva igen'; }, 800);
+}
+
 function renderProgress() {
   progressBar.innerHTML = '';
   words.forEach((_, i) => {
@@ -108,8 +123,8 @@ function renderProgress() {
     if (i === currentIndex) dot.classList.add('active');
     progressBar.appendChild(dot);
   });
-  // Nivå 3: Progress percentage
-  const pct = words.length ? Math.round((currentIndex / words.length) * 100) : 0;
+  // Nivå 3: Progress percentage (räknar "nådd position", så 8/8 = 100%)
+  const pct = words.length ? Math.round(((currentIndex + 1) / words.length) * 100) : 0;
   progressText.textContent = pct + '%';
 }
 
@@ -269,8 +284,10 @@ async function shareApp() {
 }
 
 // Events
-listenBtn.addEventListener('click', playSentenceAudio);
-repeatBtn.addEventListener('click', playSentenceAudio);
+// Lyssna/Repetera spelar vår egen ljudfil (MiniMax Swedish_male_1_v1)
+// — INTE webbläsar-TTS, för att hålla samma röst som på bilden.
+listenBtn.addEventListener('click', playAudio);
+repeatBtn.addEventListener('click', playAudio);
 checkBtn.addEventListener('click', checkGuess);
 revealBtn.addEventListener('click', reveal);
 shareBtn.addEventListener('click', shareApp);
@@ -325,6 +342,7 @@ dismissInstallBtn?.addEventListener('click', () => {
 });
 
 shuffleBtn?.addEventListener('click', shuffleWords);
+practiceAgainBtn?.addEventListener('click', practiceAgain);
 
 // Nivå 3: 3-sekunder visningsläge
 mode3sBtn?.addEventListener('click', () => {
@@ -498,6 +516,14 @@ function updateUI() {
   audioIndicator.textContent = '';
   prevBtn.disabled = currentIndex === 0;
   nextBtn.disabled = currentIndex === words.length - 1;
+  // Nivå 3+: gör "Öva igen" extra prominent på sista bilden
+  if (practiceAgainBtn) {
+    if (currentIndex === words.length - 1) {
+      practiceAgainBtn.classList.add('prominent');
+    } else {
+      practiceAgainBtn.classList.remove('prominent');
+    }
+  }
   renderProgress();
   guessInput.focus();
 }

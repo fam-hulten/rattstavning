@@ -1,7 +1,7 @@
 // Stavningsträning service worker
 // Strategy: cache-first for app shell, network-first for data (saol-data.json).
 
-const CACHE_NAME = 'stavning-v2';
+const CACHE_NAME = 'stavning-v3';
 const APP_SHELL = [
   './',
   'index.html',
