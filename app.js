@@ -479,10 +479,35 @@ function checkGuess() {
       setTimeout(launchConfetti, 300);
     }
   } else {
-    feedbackEl.innerHTML = `✗ Inte rätt. Du skrev: <strong>${escapeHtml(guessInput.value.trim())}</strong>`;
-    feedbackEl.className = 'feedback feedback-wrong';
+    // B29: Time-delay feedback — ge Zach chans att själv rätta innan facit
+    const guessText = guessInput.value.trim();
+    const correctText = word.text;
+    let highlightedGuess = '';
+    let i = 0;
+    // Markera felaktiga bokstäver
+    while (i < guessText.length && i < correctText.length) {
+      if (guessText[i].toLowerCase() === correctText[i].toLowerCase()) {
+        highlightedGuess += escapeHtml(guessText[i]);
+      } else {
+        highlightedGuess += `<span class="wrong-letter">${escapeHtml(guessText[i])}</span>`;
+      }
+      i++;
+    }
+    // Lägg till extra/mindre bokstäver
+    if (guessText.length > correctText.length) {
+      highlightedGuess += `<span class="wrong-letter">${escapeHtml(guessText.slice(i))}</span>`;
+    } else if (guessText.length < correctText.length) {
+      highlightedGuess += `<span class="missing-letter">${escapeHtml(correctText.slice(i))}</span>`;
+    }
+    // Visa "Svara gärna igen..." i 3 sek, sen fel + facit
+    feedbackEl.innerHTML = 'Svara gärna igen…';
+    feedbackEl.className = 'feedback feedback-hint';
     streak = 0;
     streakCounter.classList.remove('visible');
+    setTimeout(() => {
+      feedbackEl.innerHTML = `✗ Inte rätt.<br>Du skrev: <strong>${highlightedGuess}</strong><br>Rätt: <strong>${escapeHtml(correctText)}</strong>`;
+      feedbackEl.className = 'feedback feedback-wrong';
+    }, 3000);
   }
 }
 
