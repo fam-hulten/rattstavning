@@ -640,3 +640,15 @@ button.success:hover:not(:disabled) {
   button { background: #334155; color: var(--text); }
   button:hover:not(:disabled) { background: #475569; }
 }
+/* B30: Svårt-badge för adaptiv svårighetsgrad */
+.svart-badge {
+  background: #fef3c7;
+  border: 1.5px solid #f59e0b;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  color: #92400e;
+  text-align: center;
+  margin: 4px 0 8px;
+  font-weight: 500;
+}

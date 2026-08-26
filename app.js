@@ -43,8 +43,10 @@ const inputRow = document.querySelector('.input-row');
 const confettiCanvas = document.getElementById('confettiCanvas');
 
 let streak = 0;
+let wordStats = {}; // { [wordText]: { attempts: 0, correctCount: 0, lastResult: null } }
 let appMode = 'paper'; // 'paper' or 'app'
 let threeSecondTimer = null;
+let needsResort = false; // true when a wrong answer requires re-sorting
 
 const allButtons = () => [listenBtn, repeatBtn, checkBtn, revealBtn, shareBtn, prevBtn, nextBtn];
 
@@ -95,7 +97,7 @@ function shuffleWords() {
   currentIndex = 0;
   updateUI();
   playAudio();
-  // Animate shuffle button briefly
+  sortByDifficulty(); // B30: prioritize difficult words on shuffle
   shuffleBtn.textContent = '✅';
   setTimeout(() => { shuffleBtn.textContent = '🔀 Blanda om'; }, 800);
 }
@@ -109,6 +111,7 @@ function practiceAgain() {
   }
   currentIndex = 0;
   updateUI();
+  sortByDifficulty(); // B30: prioritize difficult words on restart
   playAudio();
   practiceAgainBtn.textContent = '✅ Startar om…';
   setTimeout(() => { practiceAgainBtn.textContent = '🔄 Öva igen'; }, 800);
@@ -178,6 +181,14 @@ function checkGuess() {
     void streakCounter.offsetWidth; // reflow
     streakCounter.classList.add('pulse');
     setTimeout(() => streakCounter.classList.remove('pulse'), 500);
+
+    // B30: Track correct answer per word
+    const wKey = word.text;
+    if (!wordStats[wKey]) wordStats[wKey] = { attempts: 0, correctCount: 0, lastResult: null };
+    wordStats[wKey].attempts++;
+    wordStats[wKey].correctCount++;
+    wordStats[wKey].lastResult = 'correct';
+
     // Nivå 3: Konfetti när sista ordet är rätt
     if (streak === words.length) {
       setTimeout(launchConfetti, 300);
@@ -504,11 +515,40 @@ function checkGuess() {
     feedbackEl.className = 'feedback feedback-hint';
     streak = 0;
     streakCounter.classList.remove('visible');
+
+    // B30: Track wrong answer per word
+    const wKey = correctText;
+    if (!wordStats[wKey]) wordStats[wKey] = { attempts: 0, correctCount: 0, lastResult: null };
+    wordStats[wKey].attempts++;
+    wordStats[wKey].lastResult = 'wrong';
+    needsResort = true;
+
     setTimeout(() => {
       feedbackEl.innerHTML = `✗ Inte rätt.<br>Du skrev: <strong>${highlightedGuess}</strong><br>Rätt: <strong>${escapeHtml(correctText)}</strong>`;
       feedbackEl.className = 'feedback feedback-wrong';
     }, 3000);
   }
+}
+
+// B30: Adaptiv sortering — svåra ord först inom omgången
+function sortByDifficulty() {
+  // Sortera om words-array baserat på svårighet: högst (fel-försök) först
+  // Ord som aldrig försökt hamnar sist
+  words.sort((a, b) => {
+    const aStats = wordStats[a.text] || { score: -1 };
+    const bStats = wordStats[b.text] || { score: -1 };
+    // score = attempts - correctCount (högre = svårare)
+    const aScore = aStats.attempts > 0 ? aStats.attempts - aStats.correctCount : -1;
+    const bScore = bStats.attempts > 0 ? bStats.attempts - bStats.correctCount : -1;
+    // Aldra försökta sist (-1), sedan fallande svårighet
+    if (aScore === -1 && bScore === -1) return 0;
+    if (aScore === -1) return 1;
+    if (bScore === -1) return -1;
+    return bScore - aScore;
+  });
+  // Nollställ currentIndex till början efter sortering
+  currentIndex = 0;
+  renderProgress();
 }
 
 // Reset streak on navigate away from current word
@@ -551,6 +591,19 @@ function updateUI() {
   }
   renderProgress();
   guessInput.focus();
+
+  // B30: Visa svårt-badge om ordet haft fel
+  const wKey = word.text;
+  const stats = wordStats[wKey];
+  const svartBadge = document.getElementById('svartBadge');
+  if (stats && stats.attempts > 0 && stats.lastResult === 'wrong') {
+    if (svartBadge) {
+      svartBadge.textContent = `⚠️ Svårt (${stats.attempts - stats.correctCount} fel av ${stats.attempts})`;
+      svartBadge.hidden = false;
+    }
+  } else if (svartBadge) {
+    svartBadge.hidden = true;
+  }
 }
 
 // Service worker registration
