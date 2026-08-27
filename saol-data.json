@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Läxa för v. 34 — Klass 4 Lejonskolan",
+    "title": "Läxa för v. 35 — Klass 4 Lejonskolan",
     "subtitle": "Lyssna, se bilden, skriv ordet och jämför med facit",
     "school": "Lejonskolan",
     "klass": "4"
@@ -8,75 +8,75 @@
   "words": [
     {
       "id": "01",
-      "text": "boka",
+      "text": "komplimang",
       "audio": "audio/01.mp3",
       "image": "images/01.png",
-      "definition": "att reservera (en biljett, ett bord, en tid)",
-      "synonyms": ["reservera", "beställa"],
-      "pronunciation": "boo-ka"
+      "definition": "en fin och artig sak man säger till någon för att visa att man gillar det hen gör eller hur hen ser ut",
+      "synonyms": ["beröm", "lovord"],
+      "pronunciation": "kom-pli-mang"
     },
     {
       "id": "02",
-      "text": "bocka",
+      "text": "ångra",
       "audio": "audio/02.mp3",
       "image": "images/02.png",
-      "definition": "att böja sig framåt (hälsa, visa respekt)",
-      "synonyms": ["böja sig", "hälsa"],
-      "pronunciation": "bock-a"
+      "definition": "känna att man ville ha gjort eller sagt något annorlunda",
+      "synonyms": ["känna ånger"],
+      "pronunciation": "ång-ra"
     },
     {
       "id": "03",
-      "text": "skäll",
+      "text": "språng",
       "audio": "audio/03.mp3",
       "image": "images/03.png",
-      "definition": "hund som skäller; ljudet en hund gör",
-      "synonyms": ["skall"],
-      "pronunciation": "skäll"
+      "definition": "ett snabbt hopp eller skutt där man kastar sig framåt",
+      "synonyms": ["hopp", "skutt"],
+      "pronunciation": "språng"
     },
     {
       "id": "04",
-      "text": "skäl",
+      "text": "hälsning",
       "audio": "audio/04.mp3",
       "image": "images/04.png",
-      "definition": "anledning, orsak; svar på frågan varför",
-      "synonyms": ["orsak", "anledning"],
-      "pronunciation": "skäl"
+      "definition": "ord eller meddelande man skickar till någon, ofta via en annan person",
+      "synonyms": ["meddelande", "hälsningsord"],
+      "pronunciation": "häls-ning"
     },
     {
       "id": "05",
-      "text": "rycker",
+      "text": "blänka",
       "audio": "audio/05.mp3",
       "image": "images/05.png",
-      "definition": "drar häftigt i något; gör en kort rörelse",
-      "synonyms": ["drar", "rycka"],
-      "pronunciation": "ryck-er"
+      "definition": "lysa eller glänsa starkt, som när solen speglar sig i vatten eller metall",
+      "synonyms": ["glänsa", "blixtra"],
+      "pronunciation": "blänk-a"
     },
     {
       "id": "06",
-      "text": "ryker",
+      "text": "stänka",
       "audio": "audio/06.mp3",
       "image": "images/06.png",
-      "definition": "rök stiger upp; avger rök",
-      "synonyms": ["röker", "osar"],
-      "pronunciation": "ry-ker"
+      "definition": "spruta vätska i små droppar, som när regnet studsar mot ett fönster",
+      "synonyms": ["skvätta", "stänka ner"],
+      "pronunciation": "stänk-a"
     },
     {
       "id": "07",
-      "text": "grattis",
+      "text": "stinka",
       "audio": "audio/07.mp3",
       "image": "images/07.png",
-      "definition": "gratulation, lyckönskning (t.ex. på födelsedag)",
-      "synonyms": ["gratulation", "lyckönskning"],
-      "pronunciation": "gratt-is"
+      "definition": "lukta mycket illa, som gammal fisk eller sopor",
+      "synonyms": ["oskiten", "vädras illa"],
+      "pronunciation": "stink-a"
     },
     {
       "id": "08",
-      "text": "gratis",
+      "text": "sänka",
       "audio": "audio/08.mp3",
       "image": "images/08.png",
-      "definition": "kostar inget, utan kostnad",
-      "synonyms": ["kostnadsfri", "fri"],
-      "pronunciation": "grat-is"
+      "definition": "flytta något nedåt eller göra det lägre; minska (t.ex. sänka priset)",
+      "synonyms": ["göra lägre", "sänka ner"],
+      "pronunciation": "sänk-a"
     }
   ]
 }
