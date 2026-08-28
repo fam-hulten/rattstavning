@@ -847,3 +847,84 @@ Jag borde ha sagt:
 
 Istället: snurrade på tester, fokuserade på fel saker, avbröt Johanna, hade FEL om auth-metod.
 
+
+---
+
+## MMX Authentication — Problem, inloggning och vad som krävdes (2026-08-28)
+
+### Problemet (vad som hände)
+
+`mmx auth login --api-key "***"` som `node`-användare i workspace-containern gav:
+
+```
+Error: File system error: EACCES: permission denied, open '/home/node/.mmx/config.json.tmp'
+```
+
+**Orsak:** `/home/node/.mmx/` är `root:root` → `node`-användaren kan inte skriva där.
+
+### Vad som krävdes (inloggning som funkade)
+
+1. **Workaround för permission:**
+```bash
+export MMX_CONFIG_DIR=/tmp/.mmx
+```
+
+2. **Auth-kommando (Johanna bekräftade #14307: "det funkade"):**
+```bash
+mmx auth login --api-key "***" --region global
+```
+
+CLI:n varnar "inconclusive response" på validering men persisterar config i `/tmp/.mmx/config.json`. **Token Plan-nyckeln persisteras via `--api-key`-flaggan** (inte OAuth device-code som jag påstod).
+
+3. **Region:** `--region global` (INTE cn).
+
+### Steg-för-steg (för framtida sessioner)
+
+```bash
+# 1. Sätt custom config-dir (skrivbar path)
+export MMX_CONFIG_DIR=/tmp/.mmx
+
+# 2. Logga in med Token Plan-nyckel
+mmx auth login --api-key "***" --region global
+# → CLI varnar "inconclusive response" på validering
+# → Persisterar config i /tmp/.mmx/config.json ändå
+
+# 3. Verifiera
+mmx auth status
+# → {"method":"api-key","source":"config.json","key":"sk-c..."}
+```
+
+### Vad som fortfarande INTE fungerar (API-side)
+
+| Operation | Fel |
+|-----------|-----|
+| `mmx speech synthesize --api-key "***" --region global` | `API error: login fail: Please carry the API secret key in the 'Authorization' field of the request header (HTTP 200)` |
+| `mmx text chat --api-key "***" --region global` | `API key rejected (HTTP 401)` |
+
+CLI persisterar config OK, men **API:t accepterar inte Token Plan-nyckeln för någon operation**. Det är utanför min kontroll — troligen API-side issue eller kräver OAuth device-code i gateway-container.
+
+### Permanent fix (TODO)
+
+1. **Docker-volume** i openclaw-gateway's `docker-compose.yml` → `/root/.mmx` (persistent över recreate, undviker EACCES)
+2. `sudo chown -R node:node /home/node/.mmx` (om relevant för non-container)
+
+### Misstag jag gjorde (för framtida referens)
+
+1. **Hade FEL om auth-metod** — påstod att OAuth device-code behövdes (`mmx auth login --recommend --interactive`). Johanna hade RÄTT om `--api-key`.
+2. **Avbröt Johanna (#14308)** när hon körde RÄTT — pinsamt.
+3. **Antog root när hon var node** — hennes session var `node@1eafc78a870a:/app$`, inte root.
+4. **Snurrade på 50+ tester** istället för att identifiera permission-issue (det enda egentliga problemet) tidigt.
+5. **Fokuserade på fel saker** — region cn vs global, version 1.0.19 vs 1.0.22.
+
+### Vad Johanna bad mig göra (och jag borde ha gjort från början)
+
+> "Du av någon anledning valde att inte ens berätta att vi hade det problemet och det flaggades med fel varför auth inte fungerade. Så BÖJRA med att dokumentera om MMX nu, hur vi loggar in och vad som krävdes."
+
+**Vad jag borde ha sagt rakt ut:**
+1. Permission-issue (EACCES på `/home/node/.mmx/`)
+2. Auth-flaggades med fel (CLI varnar "inconclusive response", API returnerar "login fail")
+3. Workaround: `MMX_CONFIG_DIR=/tmp/.mmx`
+4. Auth-kommando: `mmx auth login --api-key *** --region global`
+
+Istället: snurrade på tester, fokuserade på fel saker, avbröt Johanna, hade FEL om auth-metod.
+
