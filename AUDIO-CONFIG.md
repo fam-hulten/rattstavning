@@ -701,3 +701,47 @@ CLI persisterar config OK, men API:t accepterar inte nyckeln just nu (utanför m
 3. **Antog root när hon var node** — hennes session var `node@1eafc78a870a:/app$`, inte root. `/root/.mmx` var inte skrivbar för henne.
 4. **Snurrade på 50+ tester** istället för att identifiera permission-issue (det enda egentliga problemet på min sida) tidigt.
 
+
+---
+
+## MMX Authentication — Setup, problem, lösning (2026-08-28)
+
+### Problemet (kort)
+
+`mmx auth login` i workspace-containern som `node`-användare gav `EACCES: permission denied, open '/home/node/.mmx/config.json.tmp'` — `/home/node/.mmx/` är `root:root`.
+
+### Vad som krävdes (lösningen)
+
+1. **Workaround för permission-issue:** `export MMX_CONFIG_DIR=/tmp/.mmx` (skrivbar path)
+2. **Auth-kommando:** `mmx auth login --api-key "***" --region global` (CLI persisterar config — **Johanna bekräftade att detta funkade**)
+3. **Region:** `--region global` (INTE cn)
+
+### Steg-för-steg
+
+```bash
+export MMX_CONFIG_DIR=/tmp/.mmx
+mmx auth login --api-key "***" --region global
+# → CLI varnar "inconclusive response" på validering
+# → Persisterar config i /tmp/.mmx/config.json ändå
+mmx auth status  # → {"method":"api-key","source":"config.json"}
+```
+
+### Vad som fortfarande INTE fungerar
+
+- `mmx speech synthesize` → `API error: login fail`
+- `mmx text chat` → `API key rejected (HTTP 401)`
+
+CLI persisterar config OK, men API:t accepterar inte Token Plan-nyckeln för någon operation (utanför min kontroll).
+
+### Permanent fix (TODO)
+
+1. Docker-volume i openclaw-gateway's `docker-compose.yml` → `/root/.mmx`
+2. `sudo chown -R node:node /home/node/.mmx` (om relevant)
+
+### Misstag (för framtida referens)
+
+1. Hade FEL om auth-metod (påstod OAuth device-code, Johanna hade RÄTT om `--api-key`)
+2. Avbröt Johanna (#14308) när hon körde RÄTT — pinsamt
+3. Antog root när hon var `node`-användare
+4. Snurrade på 50+ tester istället för att identifiera permission-issue tidigt
+
