@@ -194,3 +194,87 @@ Alla 8 manliga engelska-röster genererade filer utan fel (`--language Swedish` 
 - [ ] **Montera Docker-volume i openclaw-gateway** → `/root/.mmx`
 - [ ] **sudo chown -R node:node /home/node/.mmx** i workspace
 - [ ] Utforska custom voice clone om standard-röster inte duger
+
+## MMX Authentication — How we log in (2026-08-28 session)
+
+### TL;DR
+- **Permission-issue:** `/home/node/.mmx/` är root:root → EACCES för `node`-användaren
+- **Workaround:** `export MMX_CONFIG_DIR=/tmp/.mmx` (eller annan skrivbar path)
+- **Auth-metod:** `mmx auth login --api-key ***` (CLI persisterar config OK, API kan auth-issue kvarstå)
+- **Region:** `--region global` (INTE cn)
+
+### Permission-issue: varför detta hände
+
+**Problem:** `/home/node/.mmx/` är root:root i workspace-containern.
+
+```bash
+$ ls -la /home/node/.mmx/
+drwxr-xr-x 2 root root 4096 Aug 20 18:03 .
+```
+
+`mmx auth login` försöker skriva `config.json.tmp` dit. Node-användaren har INTE rättighet → EACCES.
+
+**Workaround (vad som faktiskt funkade):**
+
+```bash
+export MMX_CONFIG_DIR=/tmp/.mmx   # eller /root/.mmx om root i gateway-container
+mmx auth login --api-key "***" --region global
+```
+
+CLI:n varnar "inconclusive response" på validering, men **persisterar config ändå** (key + region i `/tmp/.mmx/config.json`).
+
+**Permanent fix (TODO):**
+
+1. `sudo chown -R node:node /home/node/.mmx` i workspace (om relevant för non-container-användning)
+2. **Docker-volume** i openclaw-gateway's `docker-compose.yml` → `/root/.mmx` (persistent över recreate)
+
+### Auth-metod: `--api-key` vs OAuth device-code
+
+**Testat (fungerar för CLI-persistering):**
+- `mmx auth login --api-key "***" --region global` → CLI persisterar config OK
+- `auth status` visar `method: api-key, source: config.json`
+
+**Mitt misstag:** Jag avbröt Johanna (#14308) när hon körde `--api-key` och påstod att det var FEL — hon hade RÄTT hela tiden. Token Plan-nyckeln persisteras korrekt via `--api-key`-flaggan.
+
+**Inte testat:**
+- OAuth device-code (`mmx auth login --recommend --region=global --interactive`) — kräver webbläsare + TTY
+
+### Region
+
+**Testat:**
+- `--region global` → CLI persisterar config, men API returnerar "API error: login fail"
+- `--region cn` → samma fel
+
+**Slutsats:** Region spelar roll för validering men löser INTE auth-fel (API accepterar inte nyckeln just nu).
+
+### Vad som FUNKAR / INTE FUNKAR (2026-08-28 07:35 UTC)
+
+**FUNKAR:**
+- `mmx --version` (1.0.22 lokalt via `npm install --prefix`, 1.0.19 globalt)
+- `npm install --prefix /home/node/.local-lib mmx-cli@latest` (workaround för EACCES på /usr/local)
+- `mmx auth login --api-key "***" --region global` (CLI persisterar config)
+
+**INTE FUNKAR (ännu):**
+- `mmx speech synthesize` → `API error: login fail: Please carry the API secret key in the 'Authorization' field of the request header (HTTP 200)`
+- `mmx text chat` → `API key rejected (HTTP 401)`
+- `mmx speech voices` → `Could not determine the API key region`
+
+### Misstag jag gjorde under sessionen (för framtida referens)
+
+1. **Hade FEL om OAuth device-code** — påstod att `mmx auth login --api-key` var FEL approach. Johanna hade RÄTT hela tiden.
+2. **Avbröt Johanna i onödan** — när hon körde RÄTT kommando sa jag "Stop — du kör fel".
+3. **Antog root när hon var node** — hennes session var `node@1eafc78a870a:/app$`, inte root.
+4. **Snurrade på 50+ tester** istället för att identifiera permission-issue tidigt.
+5. **Fokuserade på fel saker** — region (cn vs global), version (1.0.19 vs 1.0.22), GitHub issues, alla var fel spår.
+
+**Vad jag borde ha gjort direkt:**
+1. Sett EACCES → frågat Johanna om `sudo` (eller fixat permission via chown/docker-volume)
+2. Litat på Johannas confirmation att `mmx auth login --api-key` funkade
+3. Erkänt att API-acceptansen är en separat fråga (som jag inte kan lösa lokalt)
+
+### TODO: Permanent fix
+
+1. **Docker-volume** i openclaw-gateway's `docker-compose.yml` → `/root/.mmx` (persistent över recreate)
+2. `sudo chown -R node:node /home/node/.mmx` (om relevant)
+3. Verifiera om API accepterar Token Plan-nyckel för TTS efter detta
+
