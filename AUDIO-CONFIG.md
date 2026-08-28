@@ -1,0 +1,159 @@
+---
+title: AUDIO-CONFIG.md — Genereringsspecifikation för rättstavning
+date: 2026-08-28 (skapad efter Johannas "SKRIV NER" #14194 05:03 UTC)
+owner: Lilly (agent:main:main)
+status: specifikation fastställd
+trigger: Johannas direktiv #14194 — "SKRIV NER. Och promptet bör vara (och också dokumenteras"
+---
+
+# AUDIO-CONFIG.md — Genereringsspecifikation
+
+## Konfiguration (auktoritativ)
+
+| Parameter | Värde |
+|-----------|-------|
+| **Voice (alias i vår dokumentation)** | `Swedish_male_1_v1` |
+| **Voice ID (MiniMax)** | `English_PatientMan` |
+| **Speed** | `0.85` |
+| **Model** | `speech-2.8-hd` |
+| **Language boost** | `Swedish` |
+| **Sample rate** | 32000 Hz (default) |
+| **Bitrate** | 128000 bps (default) |
+| **Format** | mp3 (default) |
+| **Output dir** | `rattstavning/audio/` |
+
+## Viktigt: `Swedish_male_1_v1` är ALIAS
+
+**`Swedish_male_1_v1` finns INTE som voice ID i MiniMax.**
+
+Det är vår interna namngivning (sedan commit `feat(audio): byt till MiniMax Swedish_male_1_v1`, 2026-08-22). Det används i:
+- `PLAN.md` ("röst `Swedish_male_1_v1`")
+- `README.md`
+- `app.js` (kommentar)
+- `memory/2026-08-22-0619.md`
+- `memory/2026-08-28-0445.md`
+
+**Riktigt MiniMax voice ID** = `English_PatientMan` (Voice ID #36 i MiniMax system voice-listan, 332 röster totalt).
+
+**Varför alias?** Karaktären `English_PatientMan` är språk-neutral — den läser svenska bra med `--language Swedish`. Vi kallar den "Swedish_male_1_v1" eftersom det är vår svenska-manliga-röst-konfiguration. Om vi byter röst (t.ex. till `English_Gentle-voiced_man` eller en custom voice clone), uppdaterar vi aliaset men behåller namnet.
+
+---
+
+## Prompt-format
+
+**Standardformat för alla ord:**
+
+```
+Säg ordet "<ord>"
+```
+
+**Exempel:**
+- Ord: `komplimang` → Prompt: `Säg ordet "komplimang"`
+- Ord: `åka` → Prompt: `Säg ordet "åka"`
+- Ord: `sänka` → Prompt: `Säg ordet "sänka"`
+
+**Viktigt:**
+- Citationstecken (`"`) runt ordet är obligatoriska
+- Inga extra tecken före/efter ordet inom citationstecknen
+- Versaler behålls som i saol-data.json
+
+---
+
+## Genereringskommando
+
+### Enskilt ord
+
+```bash
+export XDG_CONFIG_HOME=/tmp/mmx-config
+mmx speech synthesize \
+  --text 'Säg ordet "<ord>"' \
+  --voice English_PatientMan \
+  --language Swedish \
+  --speed 0.85 \
+  --model speech-2.8-hd \
+  --out rattstavning/audio/<id>.mp3 \
+  --api-key "***" \
+  --region global \
+  --quiet
+```
+
+### Batch (alla 8 v. 35-ord)
+
+```bash
+export XDG_CONFIG_HOME=/tmp/mmx-config
+for entry in "01 komplimang" "02 ångra" "03 språng" "04 hälsning" \
+             "05 blänka" "06 stänka" "07 stinkta" "08 sänka"; do
+  id=$(echo "$entry" | cut -d' ' -f1)
+  word=$(echo "$entry" | cut -d' ' -f2-)
+  mmx speech synthesize \
+    --text "Säg ordet \"${word}\"" \
+    --voice English_PatientMan \
+    --language Swedish \
+    --speed 0.85 \
+    --model speech-2.8-hd \
+    --out "rattstavning/audio/${id}.mp3" \
+    --api-key "***" \
+    --region global \
+    --quiet
+done
+```
+
+**Varning:** Skriv `"stinkta"` om du genererar separat — bash klarar inte ÅÄÖ i cut-funktionen utan LC_ALL. Korrekt stavning i saol-data.json är `"stinka"`.
+
+---
+
+## Permission-workaround
+
+`/home/node/.mmx/` är root:root → node kan inte skriva auth-config.
+
+**Workaround:** `export XDG_CONFIG_HOME=/tmp/mmx-config && mkdir -p /tmp/mmx-config`
+
+**Permanent lösning (kräver sudo):** `chown -R node:node /home/node/.mmx/` — fråga Johanna.
+
+---
+
+## Testresultat (verifierat 2026-08-28 04:59 UTC)
+
+| Konfiguration | Test-ord | Fil | Storlek |
+|---------------|----------|-----|---------|
+| English_PatientMan + Swedish + 0.85 + speech-2.8-hd | komplimang | `/tmp/audio-mmx/English_PatientMan.mp3` | 22521 bytes |
+| English_Gentle-voiced_man + Swedish + 0.85 + speech-2.8-hd | komplimang | `English_Gentle-voiced_man.mp3` | 25404 bytes |
+| English_Trustworth_Man + Swedish + 0.85 + speech-2.8-hd | komplimang | `English_Trustworth_Man.mp3` | 22521 bytes |
+| English_Deep-VoicedGentleman + Swedish + 0.85 + speech-2.8-hd | komplimang | `English_Deep-VoicedGentleman.mp3` | 23674 bytes |
+| English_Diligent_Man + Swedish + 0.85 + speech-2.8-hd | komplimang | `English_Diligent_Man.mp3` | 25980 bytes |
+| English_DecentYoungMan + Swedish + 0.85 + speech-2.8-hd | komplimang | `English_DecentYoungMan.mp3` | 20215 bytes |
+| English_ReservedYoungMan + Swedish + 0.85 + speech-2.8-hd | komplimang | `English_ReservedYoungMan.mp3` | 22521 bytes |
+| English_Aussie_Bloke + Swedish + 0.85 + speech-2.8-hd | komplimang | `English_Aussie_Bloke.mp3` | 30593 bytes |
+
+Alla 8 manliga engelska-röster genererade filer utan fel.
+
+---
+
+## Migration från tidigare konfiguration
+
+**Tidigare (2026-08-27):**
+- Voice ID: `English_expressive_narrator`
+- Speed: 0.85
+- Model: speech-2.8-hd
+- **INGEN** `--language Swedish`-boost
+- Text: bara ordet (t.ex. "komplimang")
+
+**Ny (2026-08-28, denna spec):**
+- Voice ID: `English_PatientMan`
+- Speed: 0.85
+- Model: speech-2.8-hd
+- `--language Swedish`-boost
+- Text: `'Säg ordet "<ord>"'`
+
+**Migration krävs:** Alla 8 mp3-filer i `rattstavning/audio/` behöver regenereras.
+
+---
+
+## TODO
+
+- [ ] Regenerera v. 35 (8 mp3-filer) med ny konfiguration + prompt
+- [ ] Verifiera ljudkvalitet (jämför med Zacharias tidigare feedback)
+- [ ] Uppdatera `app.js` om det finns hårdkodade voice-referenser
+- [ ] Testa på riktig mobil-webbläsare
+- [ ] Permanent lösa `/home/node/.mmx/` permission-issue
+- [ ] Utforska custom voice clone om standard-röster inte duger
