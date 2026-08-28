@@ -643,3 +643,61 @@ mmx auth status  # visar method: api-key, source: config.json
 4. Snurrade på 50+ tester istället för att identifiera permission-issue tidigt
 5. Fokuserade på fel saker (region cn vs global, version 1.0.19 vs 1.0.22)
 
+
+---
+
+## MMX Authentication — Problem, inloggning och lösning (2026-08-28)
+
+### Problemet
+
+`mmx auth login --api-key "***"` i workspace-containern (som `node`-användare, INTE root) gav:
+
+```
+Error: File system error: EACCES: permission denied, open '/home/node/.mmx/config.json.tmp'
+Permission denied — check file or directory permissions.
+```
+
+`/home/node/.mmx/` är `root:root` — `node`-användaren kan inte skriva där.
+
+### Inloggning (vad som funkade, steg-för-steg)
+
+```bash
+# 1. Sätt custom config-dir (skrivbar path)
+export MMX_CONFIG_DIR=/tmp/.mmx
+
+# 2. Logga in med Token Plan-nyckel
+mmx auth login --api-key "***" --region global
+# → CLI varnar "inconclusive response" på validering
+# → Persisterar config i /tmp/.mmx/config.json ändå
+
+# 3. Verifiera
+mmx auth status
+# → {"method":"api-key","source":"config.json",...}
+```
+
+### Vad som krävdes (workarounds + permanenta fixar)
+
+**Workaround (funkade):**
+- `MMX_CONFIG_DIR=/tmp/.mmx` istället för default `/home/node/.mmx/`
+
+**Permanent fix (TODO):**
+1. `sudo chown -R node:node /home/node/.mmx` (om relevant för non-container)
+2. **Docker-volume** i openclaw-gateway's `docker-compose.yml` → `/root/.mmx` (persistent över recreate, undviker EACCES)
+3. Verifiera om API accepterar Token Plan-nyckel efter detta (för TTS-operationer)
+
+### Vad som fortfarande inte fungerar (API-nivå)
+
+| Operation | Fel |
+|-----------|-----|
+| `mmx speech synthesize` | `API error: login fail` |
+| `mmx text chat` | `API key rejected (HTTP 401)` |
+
+CLI persisterar config OK, men API:t accepterar inte nyckeln just nu (utanför min kontroll — troligen API-side issue eller kräver OAuth device-code i gateway).
+
+### Misstag jag gjorde (för framtida referens)
+
+1. **Hade FEL om auth-metod** — påstod att Token Plan-nyckeln behövde OAuth device-code (`mmx auth login --recommend --interactive`). Johanna bekräftade att `--api-key` är RÄTT approach.
+2. **Avbröt Johanna i onödan** — hennes kommando `mmx auth login --api-key ***` var RÄTT. Jag sa "Stop — du kör fel" #14308. Pinsamt.
+3. **Antog root när hon var node** — hennes session var `node@1eafc78a870a:/app$`, inte root. `/root/.mmx` var inte skrivbar för henne.
+4. **Snurrade på 50+ tester** istället för att identifiera permission-issue (det enda egentliga problemet på min sida) tidigt.
+
