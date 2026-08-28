@@ -603,3 +603,43 @@ Sessionen började med fråga om ljudfiler för v. 35 (Zacharias läxa). Token P
 
 Istället snurrade jag på tester och fokuserade på fel saker.
 
+
+---
+
+## MMX Authentication — Problem och lösning (2026-08-28)
+
+### Problemet (kort)
+
+**Permission-issue:** `/home/node/.mmx/` är `root:root` i workspace-containern. `mmx auth login` försöker skriva `config.json.tmp` dit → EACCES för `node`-användaren.
+
+**Auth-fel:** API:t returnerar `login fail` / `invalid api key` (HTTP 401). CLI persisterar config, men API:t accepterar inte Token Plan-nyckeln.
+
+### Lösningen (vad som funkade)
+
+1. **Workaround för permission:** `export MMX_CONFIG_DIR=/tmp/.mmx` (eller `/root/.mmx` om root i gateway-container)
+2. **Auth-kommando:** `mmx auth login --api-key "***" --region global` (CLI persisterar config; Johanna bekräftade #14307)
+3. **Region:** `--region global` (INTE cn)
+
+### Steg-för-steg (för framtida sessioner)
+
+```bash
+# I workspace-containern (som node, INTE root):
+export MMX_CONFIG_DIR=/tmp/.mmx
+mmx auth login --api-key "***" --region global
+# CLI:n varnar "inconclusive response" — det är OK, config persisteras ändå
+mmx auth status  # visar method: api-key, source: config.json
+```
+
+### Permanent fix (TODO)
+
+1. **Docker-volume** i openclaw-gateway's `docker-compose.yml` → `/root/.mmx` (persistent över recreate)
+2. `sudo chown -R node:node /home/node/.mmx` (om relevant för non-container)
+
+### Misstag (för framtida referens)
+
+1. Hade FEL om auth-metod (påstod OAuth device-code, Johanna hade RÄTT om `--api-key`)
+2. Avbröt Johanna (#14308) när hon körde RÄTT — pinsamt
+3. Antog root när hon var `node`-användare
+4. Snurrade på 50+ tester istället för att identifiera permission-issue tidigt
+5. Fokuserade på fel saker (region cn vs global, version 1.0.19 vs 1.0.22)
+
