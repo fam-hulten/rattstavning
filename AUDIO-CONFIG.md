@@ -13,10 +13,10 @@ trigger: Johannas direktiv #14194 — "SKRIV NER. Och promptet bör vara (och oc
 | Parameter | Värde |
 |-----------|-------|
 | **Voice (alias i vår dokumentation)** | `Swedish_male_1_v1` |
-| **Voice ID (MiniMax)** | `English_PatientMan` |
+| **Voice ID (MiniMax)** | *(`English_PatientMan` var FEL mappning — Johanna #14202, ofixerat)* |
 | **Speed** | `0.85` |
 | **Model** | `speech-2.8-hd` |
-| **Language boost** | `Swedish` |
+| **Language boost** | *(utelämnas — modellen auto-detekterar från texten)* |
 | **Sample rate** | 32000 Hz (default) |
 | **Bitrate** | 128000 bps (default) |
 | **Format** | mp3 (default) |
@@ -33,9 +33,9 @@ Det är vår interna namngivning (sedan commit `feat(audio): byt till MiniMax Sw
 - `memory/2026-08-22-0619.md`
 - `memory/2026-08-28-0445.md`
 
-**Riktigt MiniMax voice ID** = `English_PatientMan` (Voice ID #36 i MiniMax system voice-listan, 332 röster totalt).
+**Riktigt MiniMax voice ID** = **EJ fastställt** (Johanna #14202 — `English_PatientMan` var FEL mappning).
 
-**Varför alias?** Karaktären `English_PatientMan` är språk-neutral — den läser svenska bra med `--language Swedish`. Vi kallar den "Swedish_male_1_v1" eftersom det är vår svenska-manliga-röst-konfiguration. Om vi byter röst (t.ex. till `English_Gentle-voiced_man` eller en custom voice clone), uppdaterar vi aliaset men behåller namnet.
+`Swedish_male_1_v1` är alias som finns i PLAN.md/README.md/app.js sedan 2026-08-22, men vi har inte verifierat vad det mappas till. **Inväntar svar från Johanna om vad `Swedish_male_1_v1` egentligen är** (custom voice clone? preset? annat system?).
 
 ---
 
@@ -74,8 +74,7 @@ Säg ordet #"<ord>"
 export XDG_CONFIG_HOME=/tmp/mmx-config
 mmx speech synthesize \
   --text 'Säg ordet "<ord>"' \
-  --voice English_PatientMan \
-  --language Swedish \
+  --voice <voice_id> \
   --speed 0.85 \
   --model speech-2.8-hd \
   --out rattstavning/audio/<id>.mp3 \
@@ -83,6 +82,8 @@ mmx speech synthesize \
   --region global \
   --quiet
 ```
+
+**OBS:** `--language` utelämnas. Modellen auto-detekterar från texten (per docs: `language_boost` default = `null`, "auto" om okänt).
 
 ### Batch (alla 8 v. 35-ord)
 
@@ -94,8 +95,7 @@ for entry in "01 komplimang" "02 ångra" "03 språng" "04 hälsning" \
   word=$(echo "$entry" | cut -d' ' -f2-)
   mmx speech synthesize \
     --text "Säg ordet \"${word}\"" \
-    --voice English_PatientMan \
-    --language Swedish \
+    --voice <voice_id> \
     --speed 0.85 \
     --model speech-2.8-hd \
     --out "rattstavning/audio/${id}.mp3" \
@@ -105,7 +105,7 @@ for entry in "01 komplimang" "02 ångra" "03 språng" "04 hälsning" \
 done
 ```
 
-**Varning:** Skriv `"stinkta"` om du genererar separat — bash klarar inte ÅÄÖ i cut-funktionen utan LC_ALL. Korrekt stavning i saol-data.json är `"stinka"`.
+**Varning:** Skriv `"stinka"` korrekt — bash klarar ÅÄÖ i cut med rätt LC_ALL.
 
 ---
 
@@ -131,16 +131,16 @@ done
 
 | Konfiguration | Test-ord | Fil | Storlek |
 |---------------|----------|-----|---------|
-| English_PatientMan + Swedish + 0.85 + speech-2.8-hd | komplimang | `/tmp/audio-mmx/English_PatientMan.mp3` | 22521 bytes |
-| English_Gentle-voiced_man + Swedish + 0.85 + speech-2.8-hd | komplimang | `English_Gentle-voiced_man.mp3` | 25404 bytes |
-| English_Trustworth_Man + Swedish + 0.85 + speech-2.8-hd | komplimang | `English_Trustworth_Man.mp3` | 22521 bytes |
-| English_Deep-VoicedGentleman + Swedish + 0.85 + speech-2.8-hd | komplimang | `English_Deep-VoicedGentleman.mp3` | 23674 bytes |
-| English_Diligent_Man + Swedish + 0.85 + speech-2.8-hd | komplimang | `English_Diligent_Man.mp3` | 25980 bytes |
-| English_DecentYoungMan + Swedish + 0.85 + speech-2.8-hd | komplimang | `English_DecentYoungMan.mp3` | 20215 bytes |
-| English_ReservedYoungMan + Swedish + 0.85 + speech-2.8-hd | komplimang | `English_ReservedYoungMan.mp3` | 22521 bytes |
-| English_Aussie_Bloke + Swedish + 0.85 + speech-2.8-hd | komplimang | `English_Aussie_Bloke.mp3` | 30593 bytes |
+| English_PatientMan + 0.85 + speech-2.8-hd (`--language Swedish` men onödigt) | komplimang | `/tmp/audio-mmx/English_PatientMan.mp3` | 22521 bytes |
+| English_Gentle-voiced_man + 0.85 + speech-2.8-hd | komplimang | `English_Gentle-voiced_man.mp3` | 25404 bytes |
+| English_Trustworth_Man + 0.85 + speech-2.8-hd | komplimang | `English_Trustworth_Man.mp3` | 22521 bytes |
+| English_Deep-VoicedGentleman + 0.85 + speech-2.8-hd | komplimang | `English_Deep-VoicedGentleman.mp3` | 23674 bytes |
+| English_Diligent_Man + 0.85 + speech-2.8-hd | komplimang | `English_Diligent_Man.mp3` | 25980 bytes |
+| English_DecentYoungMan + 0.85 + speech-2.8-hd | komplimang | `English_DecentYoungMan.mp3` | 20215 bytes |
+| English_ReservedYoungMan + 0.85 + speech-2.8-hd | komplimang | `English_ReservedYoungMan.mp3` | 22521 bytes |
+| English_Aussie_Bloke + 0.85 + speech-2.8-hd | komplimang | `English_Aussie_Bloke.mp3` | 30593 bytes |
 
-Alla 8 manliga engelska-röster genererade filer utan fel.
+Alla 8 manliga engelska-röster genererade filer utan fel (`--language Swedish` fungerade men var troligen onödigt — modellen auto-detekterar).
 
 ---
 
@@ -154,10 +154,10 @@ Alla 8 manliga engelska-röster genererade filer utan fel.
 - Text: bara ordet (t.ex. "komplimang")
 
 **Ny (2026-08-28, denna spec):**
-- Voice ID: `English_PatientMan`
+- Voice ID: **EJ fastställt** (Johanna #14202 — `English_PatientMan` var FEL)
 - Speed: 0.85
 - Model: speech-2.8-hd
-- `--language Swedish`-boost
+- `--language` UTELÄMNAS (per docs — modellen auto-detekterar)
 - Text: `'Säg ordet #"<ord>"'` ← `#` framför ordet = paus-signal
 
 **Migration krävs:** Alla 8 mp3-filer i `rattstavning/audio/` behöver regenereras.
