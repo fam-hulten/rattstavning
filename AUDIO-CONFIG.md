@@ -164,11 +164,33 @@ Alla 8 manliga engelska-röster genererade filer utan fel (`--language Swedish` 
 
 ---
 
+## Permanent fix (TODO efter working session)
+
+**Problem 1: `/home/node/.mmx/` är root:root**
+- `mmx auth login --api-key` försöker skriva `config.json.tmp` → EACCES
+- Workaround: `MMX_CONFIG_DIR=/root/.mmx` (i container som root) eller `MMX_CONFIG_DIR=/tmp/.mmx` (försvinner vid restart)
+- Permanent lösning: `sudo chown -R node:node /home/node/.mmx` (i workspace)
+
+**Problem 2: Token Plan auth kräver OAuth device-code, INTE `--api-key`**
+- `mmx auth login --api-key <sk-cp-...>` → CLI varnar "inconclusive response", API returnerar "login fail" / "invalid api key"
+- FÖRRA VECKAN FUNGERADE SAMMA NYCKEL MED SAMMA COMMAND — auth fungerar inte längre
+- Token Plan-nyckel ska persisteras via OAuth device-code, INTE direkt Bearer-token
+
+**Problem 3: mmx-cli@1.0.22 vs 1.0.19 (vi har 1.0.19 globalt)**
+- Båda versioner har samma auth-fel → INTE versions-issue
+- 1.0.22 installerad lokalt via `npm install --prefix /home/node/.local-lib mmx-cli@latest`
+
+**Permanent lösning:**
+1. Montera Docker-volume i openclaw-gateway's docker-compose.yml till `/root/.mmx`
+2. sudo chown -R node:node /home/node/.mmx i workspace
+3. Dokumentera att Token Plan auth kräver OAuth device-code, INTE --api-key
+
 ## TODO
 
-- [ ] Regenerera v. 35 (8 mp3-filer) med ny konfiguration + prompt
+- [ ] Regenerera v. 35 (8 mp3-filer) med ny konfiguration + prompt (`Säg ordet #"<ord>"`)
 - [ ] Verifiera ljudkvalitet (jämför med Zacharias tidigare feedback)
 - [ ] Uppdatera `app.js` om det finns hårdkodade voice-referenser
 - [ ] Testa på riktig mobil-webbläsare
-- [ ] Permanent lösa `/home/node/.mmx/` permission-issue
+- [ ] **Montera Docker-volume i openclaw-gateway** → `/root/.mmx`
+- [ ] **sudo chown -R node:node /home/node/.mmx** i workspace
 - [ ] Utforska custom voice clone om standard-röster inte duger
