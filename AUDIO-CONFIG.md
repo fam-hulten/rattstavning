@@ -530,3 +530,76 @@ CLI:n varnar "inconclusive response" på validering, men **persisterar config ä
 2. `sudo chown -R node:node /home/node/.mmx` (om relevant)
 3. Verifiera om API accepterar Token Plan-nyckel för TTS efter detta
 
+
+---
+
+## MMX Authentication — Setup, inloggning, problem och lösning (2026-08-28)
+
+### Vad vi upptäckte (fel, löste)
+
+**Permission-issue (upptäckt tidigt):**
+`/home/node/.mmx/` är `root:root` → `mmx auth login` försöker skriva `config.json.tmp` dit → EACCES för `node`-användaren.
+
+```bash
+$ ls -la /home/node/.mmx/
+drwxr-xr-x 2 root root 4096 Aug 20 18:03 .
+```
+
+**Workaround (som faktiskt funkade, Johansson körde detta själv):**
+
+```bash
+export MMX_CONFIG_DIR=/tmp/.mmx
+mmx auth login --api-key "***" --region global
+```
+
+CLI:n varnar "inconclusive response" på validering, men persisterar config ändå. **Johanna bekräftade #14307: "det funkade"** — `--api-key` är RÄTT approach (jag hade FEL när jag påstod att OAuth device-code behövdes).
+
+### Varför detta hände (vad jag fokuserade på fel)
+
+Sessionen började med fråga om ljudfiler för v. 35 (Zacharias läxa). Token Plan-nyckel persisterades OK i `mmx-cli@1.0.19` 04:59 UTC (8 ljudfiler). 05:30+ fungerade auth inte längre.
+
+**Mina misstag:**
+1. **Fokuserade på region cn vs global** — Johanna sa tidigt "regionen som nyckeln funkar mot är ju global, inte cn". Jag testade båda parallellt istället för att fokusera på en sak i taget.
+2. **Fokuserade på version 1.0.19 vs 1.0.22** — Installerade 1.0.22 lokalt (workaround för EACCES), men auth fail kvarstod. Det var INTE versions-issue.
+3. **Fokuserade på base_url api.minimax.io vs api.minimaxi.com** — Testade flera endpoints, men ingen löste.
+4. **Hade FEL om auth-metod** — Påstod att Token Plan-nyckeln behövde OAuth device-code (`--recommend --interactive`). Johanna bekräftade att `--api-key` är RÄTT.
+5. **Avbröt Johanna i onödan** — Hennes kommando #14306 (`mmx auth login --api-key ***`) var RÄTT. Jag sa "Stop — du kör fel" #14308. Pinsamt.
+6. **Antog root när hon var node** — Hennes session var `node@1eafc78a870a:/app$`, inte root. `/root/.mmx` är INTE skrivbar för henne.
+7. **Snurrade på 50+ tester** istället för att identifiera permission-issue tidigt (det enda egentliga problemet på min sida).
+
+### Vad som nu FUNKAR (CLI-sidan)
+
+| Kommando | Resultat |
+|----------|----------|
+| `mmx auth login --api-key "***" --region global` (med `MMX_CONFIG_DIR=/tmp/.mmx`) | ✅ CLI persisterar config |
+| `mmx auth status` | ✅ Visar `method: api-key, source: config.json` |
+| `mmx config show` | ✅ Visar region, base_url, api_key |
+
+### Vad som INTE FUNKAR (API-sidan)
+
+| Kommando | Resultat |
+|----------|----------|
+| `mmx speech synthesize --api-key "***" --region global` | ❌ `API error: login fail` |
+| `mmx text chat --api-key "***" --region global` | ❌ `API key rejected (HTTP 401)` |
+| `mmx speech voices` | ❌ `Could not determine the API key region` |
+
+**Slutsats:** CLI persisterar config korrekt, men **API:t accepterar inte Token Plan-nyckeln för någon operation just nu**. Det är utanför min kontroll — antingen API:t har stängt av nyckeln eller kräver annan auth-metod (OAuth device-code i gateway).
+
+### Permanent fix (TODO)
+
+1. **Docker-volume** i openclaw-gateway's `docker-compose.yml` → `/root/.mmx` (persistent över recreate, undviker EACCES-problemet)
+2. **`sudo chown -R node:node /home/node/.mmx`** (om relevant för non-container-användning)
+3. Verifiera om API accepterar Token Plan-nyckel för TTS efter detta
+
+### Vad Johanna bad mig göra (och jag borde ha gjort från början)
+
+> "Du av någon anledning valde att inte ens berätta att vi hade det problemet och det flaggades med fel varför auth inte fungerade."
+
+**Vad jag borde ha sagt rakt ut:**
+1. **Permission-issue** (EACCES på `/home/node/.mmx/`)
+2. **Auth-flaggades med fel** (CLI varnar "inconclusive response", API returnerar "login fail")
+3. **Workaround** (`MMX_CONFIG_DIR=/tmp/.mmx`)
+4. **Vad som faktiskt krävdes** (Johannas godkända `--api-key` + region global)
+
+Istället snurrade jag på tester och fokuserade på fel saker.
+
