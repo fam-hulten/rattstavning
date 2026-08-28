@@ -44,17 +44,24 @@ Det är vår interna namngivning (sedan commit `feat(audio): byt till MiniMax Sw
 **Standardformat för alla ord:**
 
 ```
-Säg ordet "<ord>"
+Säg ordet #"<ord>"
 ```
 
+`#` framför citationstecknet = paus-signal i MiniMax. Verifierat i MiniMax studio enligt Johanna 2026-08-28.
+
 **Exempel:**
-- Ord: `komplimang` → Prompt: `Säg ordet "komplimang"`
-- Ord: `åka` → Prompt: `Säg ordet "åka"`
-- Ord: `sänka` → Prompt: `Säg ordet "sänka"`
+- Ord: `komplimang` → Prompt: `Säg ordet #"komplimang"`
+- Ord: `åka` → Prompt: `Säg ordet #"åka"`
+- Ord: `sänka` → Prompt: `Säg ordet #"sänka"`
+
+**MiniMax paus-syntax (referens):**
+- `<#x#>` = paus på x sekunder (t.ex. `<#0.5#>` = 0.5 sek)
+- `#` ensamt = kort default-paus (förmodligen ~0.3s, ej API-verifierat)
 
 **Viktigt:**
+- `#` FÖRE citationstecknet är obligatoriskt
 - Citationstecken (`"`) runt ordet är obligatoriska
-- Inga extra tecken före/efter ordet inom citationstecknen
+- Inga extra tecken efter ordet inom citationstecknen
 - Versaler behålls som i saol-data.json
 
 ---
@@ -112,6 +119,14 @@ done
 
 ---
 
+## Beslut (2026-08-28, Johanna direktiv #14197)
+
+**MiniMax Swedish_male_1_v1 (`English_PatientMan`) är slutgiltigt val** — inga alternativa providers (OpenAI/Azure) ska föreslås. MiniMax är testat och överlägset för svensk barnläxa.
+
+**Auth-status:** Vänta — Johanna bekräftade att det INTE är rate-limit, bara tillfälligt fel.
+
+---
+
 ## Testresultat (verifierat 2026-08-28 04:59 UTC)
 
 | Konfiguration | Test-ord | Fil | Storlek |
@@ -143,7 +158,7 @@ Alla 8 manliga engelska-röster genererade filer utan fel.
 - Speed: 0.85
 - Model: speech-2.8-hd
 - `--language Swedish`-boost
-- Text: `'Säg ordet "<ord>"'`
+- Text: `'Säg ordet #"<ord>"'` ← `#` framför ordet = paus-signal
 
 **Migration krävs:** Alla 8 mp3-filer i `rattstavning/audio/` behöver regenereras.
 
