@@ -745,3 +745,34 @@ CLI persisterar config OK, men API:t accepterar inte Token Plan-nyckeln för nå
 3. Antog root när hon var `node`-användare
 4. Snurrade på 50+ tester istället för att identifiera permission-issue tidigt
 
+
+---
+
+## MMX Authentication — Problem, lösning, dokumentation (2026-08-28)
+
+### Vad som hände (kort)
+
+`mmx auth login --api-key "***"` som `node`-användare i workspace-containern gav `EACCES: permission denied, open '/home/node/.mmx/config.json.tmp'` — `/home/node/.mmx/` är `root:root`.
+
+### Lösningen (vad som funkade)
+
+```bash
+export MMX_CONFIG_DIR=/tmp/.mmx
+mmx auth login --api-key "***" --region global
+```
+
+CLI:n varnar "inconclusive response" men persisterar config. **Johanna bekräftade #14307: "det funkade"** — `--api-key` är RÄTT approach.
+
+### Varför detta hände (vad jag fokuserade fel)
+
+1. **Hade FEL om auth-metod** — påstod att OAuth device-code behövdes. Johanna hade RÄTT om `--api-key`.
+2. **Avbröt Johanna (#14308)** när hon körde RÄTT. Pinsamt.
+3. **Antog root när hon var node** — hennes session var `node@1eafc78a870a:/app$`.
+4. **Snurrade på 50+ tester** istället för att identifiera permission-issue (det enda egentliga problemet).
+5. **Fokuserade på fel saker** — region cn vs global, version 1.0.19 vs 1.0.22.
+
+### Permanent fix (TODO)
+
+1. Docker-volume i openclaw-gateway's `docker-compose.yml` → `/root/.mmx`
+2. `sudo chown -R node:node /home/node/.mmx` (om relevant)
+
