@@ -44,6 +44,8 @@ const confettiCanvas = document.getElementById('confettiCanvas');
 
 let streak = 0;
 let wordStats = {}; // { [wordText]: { attempts: 0, correctCount: 0, lastResult: null } }
+let usageStats = { sessions: 0, lastSession: null, totalWords: 0, daily: {} };
+const STATS_KEY = 'ratt-stats';
 let appMode = 'paper'; // 'paper' or 'app'
 let threeSecondTimer = null;
 let needsResort = false; // true when a wrong answer requires re-sorting
@@ -77,7 +79,43 @@ function showError(msg) {
   guessInput.disabled = true;
 }
 
+function loadStats() {
+  try {
+    const raw = localStorage.getItem(STATS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.wordStats) wordStats = parsed.wordStats;
+      if (parsed.usageStats) usageStats = parsed.usageStats;
+      if (parsed.streak) streak = parsed.streak;
+    }
+  } catch {}
+}
+
+function saveStats() {
+  try {
+    localStorage.setItem(STATS_KEY, JSON.stringify({
+      wordStats,
+      usageStats,
+      streak
+    }));
+  } catch {}
+}
+
+function logSession() {
+  const now = Date.now();
+  const dateKey = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  if (!usageStats.daily) usageStats.daily = {};
+  usageStats.daily[dateKey] = (usageStats.daily[dateKey] || 0) + 1;
+  usageStats.sessions++;
+  usageStats.lastSession = now;
+  usageStats.totalWords += words.length;
+  console.log(`[usage] Session start ${dateKey} — ${words.length} ord — total sessions: ${usageStats.sessions}`);
+  saveStats();
+}
+
 function init() {
+  loadStats();
+  logSession();
   // Slumpa ordning en gång per session (Level 1 — Fisher-Yates)
   for (let i = words.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -188,6 +226,7 @@ function checkGuess() {
     wordStats[wKey].attempts++;
     wordStats[wKey].correctCount++;
     wordStats[wKey].lastResult = 'correct';
+    saveStats();
 
     // Nivå 3: Konfetti när sista ordet är rätt
     if (streak === words.length) {
@@ -521,6 +560,7 @@ function checkGuess() {
     if (!wordStats[wKey]) wordStats[wKey] = { attempts: 0, correctCount: 0, lastResult: null };
     wordStats[wKey].attempts++;
     wordStats[wKey].lastResult = 'wrong';
+    saveStats();
     needsResort = true;
 
     setTimeout(() => {
