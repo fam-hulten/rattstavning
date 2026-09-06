@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Läxa för v. 35 — Klass 4 Lejonskolan",
+    "title": "Läxa för v. 36 — Klass 4 Lejonskolan",
     "subtitle": "Lyssna, se bilden, skriv ordet och jämför med facit",
     "school": "Lejonskolan",
     "klass": "4"
@@ -13,7 +13,9 @@
       "image": "images/01.png",
       "definition": "en fin och artig sak man säger till någon för att visa att man gillar det hen gör eller hur hen ser ut",
       "synonyms": ["beröm", "lovord"],
-      "pronunciation": "kom-pli-mang"
+      "pronunciation": "kom-pli-mang",
+      "active": false,
+      "archived_at": "2026-09-06"
     },
     {
       "id": "02",
@@ -22,7 +24,9 @@
       "image": "images/02.png",
       "definition": "känna att man ville ha gjort eller sagt något annorlunda",
       "synonyms": ["känna ånger"],
-      "pronunciation": "ång-ra"
+      "pronunciation": "ång-ra",
+      "active": false,
+      "archived_at": "2026-09-06"
     },
     {
       "id": "03",
@@ -31,7 +35,9 @@
       "image": "images/03.png",
       "definition": "ett snabbt hopp eller skutt där man kastar sig framåt",
       "synonyms": ["hopp", "skutt"],
-      "pronunciation": "språng"
+      "pronunciation": "språng",
+      "active": false,
+      "archived_at": "2026-09-06"
     },
     {
       "id": "04",
@@ -40,7 +46,9 @@
       "image": "images/04.png",
       "definition": "ord eller meddelande man skickar till någon, ofta via en annan person",
       "synonyms": ["meddelande", "hälsningsord"],
-      "pronunciation": "häls-ning"
+      "pronunciation": "häls-ning",
+      "active": false,
+      "archived_at": "2026-09-06"
     },
     {
       "id": "05",
@@ -49,7 +57,9 @@
       "image": "images/05.png",
       "definition": "lysa eller glänsa starkt, som när solen speglar sig i vatten eller metall",
       "synonyms": ["glänsa", "blixtra"],
-      "pronunciation": "blänk-a"
+      "pronunciation": "blänk-a",
+      "active": false,
+      "archived_at": "2026-09-06"
     },
     {
       "id": "06",
@@ -58,7 +68,9 @@
       "image": "images/06.png",
       "definition": "spruta vätska i små droppar, som när regnet studsar mot ett fönster",
       "synonyms": ["skvätta", "stänka ner"],
-      "pronunciation": "stänk-a"
+      "pronunciation": "stänk-a",
+      "active": false,
+      "archived_at": "2026-09-06"
     },
     {
       "id": "07",
@@ -67,7 +79,9 @@
       "image": "images/07.png",
       "definition": "lukta mycket illa, som gammal fisk eller sopor",
       "synonyms": ["oskiten", "vädras illa"],
-      "pronunciation": "stink-a"
+      "pronunciation": "stink-a",
+      "active": false,
+      "archived_at": "2026-09-06"
     },
     {
       "id": "08",
@@ -76,7 +90,9 @@
       "image": "images/08.png",
       "definition": "flytta något nedåt eller göra det lägre; minska (t.ex. sänka priset)",
       "synonyms": ["göra lägre", "sänka ner"],
-      "pronunciation": "sänk-a"
+      "pronunciation": "sänk-a",
+      "active": false,
+      "archived_at": "2026-09-06"
     },
     {
       "id": "09",

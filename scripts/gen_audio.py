@@ -109,7 +109,7 @@ def main():
 
     with open(data_path) as f:
         data = json.load(f)
-    words = data.get("words", [])
+    words = [w for w in data.get("words", []) if w.get("active") is not False]
     if not words:
         print(f"✗ Inga ord i {data_path}", file=sys.stderr)
         sys.exit(1)

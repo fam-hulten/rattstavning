@@ -57,7 +57,7 @@ async function loadData() {
     const res = await fetch('saol-data.json', { cache: 'no-store' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    words = data.words || [];
+    words = (data.words || []).filter(w => w.active !== false);
     meta = data.meta || {};
     if (meta.title) titleEl.textContent = meta.title;
     if (meta.subtitle) subtitleEl.textContent = meta.subtitle;
