@@ -74,10 +74,13 @@ Se `saol-data.json` i repot. Ordet "stinkta" på rad 7 är stavfel — ska vara 
 
 ## Vanliga misstag
 
-- � Använd `--voice English_PatientMan` eller `--voice English_expressive_narrator` → rätt är `Swedish_male_1_v1`
+- ❌ Använd `--voice English_PatientMan` eller `--voice English_expressive_narrator` → rätt är `Swedish_male_1_v1`
 - ❌ Använd `--region cn` → rätt är `--region global`
-- ❌ Använd `--language Swedish` → utelämna, auto-detect
+- ❌ **UTELÄMNA `--language Swedish`** — MiniMax auto-detectar fel språk för korta/loanword-liknande svenska ord (verifierat 2026-09-06: v.36-audio utan flagga → fel språk för "underlig", "avund", "kant" m.fl.)
+- ✅ **ALLTID `--language Swedish`** för SV-röster — auto-detect är opålitligt
 - ❌ Glöm `#` i prompt → blir ingen paus
+
+**Läxa 2026-09-06:** `--language Swedish` är INTE valfri. MiniMax SV-röst → ALLTID `--language Swedish` (eller använd `scripts/gen_audio.py` som auto-sätter den).
 
 ## Referenser
 
