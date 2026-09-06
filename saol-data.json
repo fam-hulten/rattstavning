@@ -77,6 +77,78 @@
       "definition": "flytta något nedåt eller göra det lägre; minska (t.ex. sänka priset)",
       "synonyms": ["göra lägre", "sänka ner"],
       "pronunciation": "sänk-a"
+    },
+    {
+      "id": "09",
+      "text": "underlig",
+      "audio": "audio/09.mp3",
+      "image": "images/09.png",
+      "definition": "något som inte är som vanligt, konstigt eller oväntat på ett sätt som är svårt att förstå",
+      "synonyms": ["konstig", "märklig", "ovanlig"],
+      "pronunciation": "un-der-lig"
+    },
+    {
+      "id": "10",
+      "text": "försvann",
+      "audio": "audio/10.mp3",
+      "image": "images/10.png",
+      "definition": "fanns förut men syns inte längre, har blivit borta utan att man vet vart",
+      "synonyms": ["blev borta", "gick upp i rök"],
+      "pronunciation": "för-svann"
+    },
+    {
+      "id": "11",
+      "text": "minsann",
+      "audio": "audio/11.mp3",
+      "image": "images/11.png",
+      "definition": "ett gammaldags sätt att visa att man verkligen menar något, ofta när man är förvånad",
+      "synonyms": ["sannerligen"],
+      "pronunciation": "min-sann"
+    },
+    {
+      "id": "12",
+      "text": "avund",
+      "audio": "audio/12.mp3",
+      "image": "images/12.png",
+      "definition": "känsla av att man önskar att man hade det någon annan har, som en leksak eller en sak",
+      "synonyms": ["avundsjuka", "svartsjuka"],
+      "pronunciation": "a-vund"
+    },
+    {
+      "id": "13",
+      "text": "hann",
+      "audio": "audio/13.mp3",
+      "image": "images/13.png",
+      "definition": "hade tillräckligt med tid för att hinna göra något innan det var för sent",
+      "synonyms": ["hade tid", "kunde"],
+      "pronunciation": "hann"
+    },
+    {
+      "id": "14",
+      "text": "ändå",
+      "audio": "audio/14.mp3",
+      "image": "images/14.png",
+      "definition": "trots att det var svårt eller inte borde gå, så hände det ändå",
+      "synonyms": ["trots allt", "likväl"],
+      "pronunciation": "än-då"
+    },
+    {
+      "id": "15",
+      "text": "runt",
+      "audio": "audio/15.mp3",
+      "image": "images/15.png",
+      "definition": "i en cirkel omkring något, åt alla håll",
+      "synonyms": ["omkring", "runt omkring"],
+      "pronunciation": "runt"
+    },
+    {
+      "id": "16",
+      "text": "kant",
+      "audio": "audio/16.mp3",
+      "image": "images/16.png",
+      "definition": "den yttersta linjen eller sidan av något, där det tar slut",
+      "synonyms": ["sida", "gräns"],
+      "pronunciation": "kant"
     }
   ]
 }
