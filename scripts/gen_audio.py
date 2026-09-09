@@ -54,6 +54,23 @@ def check_mmx_auth() -> bool:
         return False
 
 
+def get_duration_mp3(path: Path) -> float | None:
+    """Returnerar MP3-duration i sekunder via ffprobe, eller None vid fel."""
+    try:
+        r = subprocess.run(
+            ["ffprobe", "-v", "error",
+             "-show_entries", "format=duration",
+             "-of", "default=noprint_wrappers=1:nokey=1",
+             str(path)],
+            capture_output=True, text=True, timeout=10
+        )
+        if r.returncode == 0:
+            return float(r.stdout.strip())
+    except Exception:
+        pass
+    return None
+
+
 def synth(text: str, voice: str, out_path: Path) -> bool:
     """Kör mmx speech synthesize. Returnerar True om fil skapades."""
     # V3.2 (verifierat 2026-09-06): --language Swedish KRÄVS för MiniMax
@@ -76,6 +93,26 @@ def synth(text: str, voice: str, out_path: Path) -> bool:
     except Exception as e:
         print(f"  ✗ synth error: {e}", file=sys.stderr)
         return False
+
+
+def check_duration(path: Path, text: str) -> float | None:
+    """
+    Sanity-check MP3-duration. Returnerar duration eller None.
+    VARNING om duration >50%% utanför förväntat intervall.
+    Förväntat: ~0.3s per tecken vid speed 0.85 (bred marginal).
+    """
+    dur = get_duration_mp3(path)
+    if dur is None:
+        return None
+    # Riktmärke: ~0.3s/tecken vid speed 0.85 (bred gräns för svenska ord)
+    chars = len(text.replace('"', '').replace('#', ''))
+    expected = chars * 0.3
+    lower = expected * 0.5
+    upper = expected * 3.0  # Generöst övre intervall
+    if dur < lower or dur > upper:
+        print(f"  ⚠ duration warning: {dur:.1f}s för text '{text}' "
+              f"(förväntat ~{expected:.1f}s, intervall {lower:.1f}–{upper:.1f}s)")
+    return dur
 
 
 def main():
@@ -144,7 +181,8 @@ def main():
             print(f"  [dry-run] {out_path.name}: '{prompt}'")
             ok += 1
         elif synth(prompt, VOICE_SV, out_path):
-            print(f"  ✓ {out_path.name}")
+            dur = check_duration(out_path, prompt)
+            print(f"  ✓ {out_path.name}" + (f" ({dur:.1f}s)" if dur else ""))
             ok += 1
         else:
             print(f"  ✗ {out_path.name}")
