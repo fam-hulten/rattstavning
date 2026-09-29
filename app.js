@@ -454,20 +454,19 @@ modeToggle?.addEventListener('click', e => {
   opt.classList.add('active');
   if (appMode === 'paper') {
     inputRow.style.display = 'none';
-    checkBtn.style.display = 'none';
-    revealBtn.style.display = '';
+    // checkBtn ALLTID synlig — i paper-mode visar den facit direkt
+    revealBtn.style.display = 'none';
   } else {
     inputRow.style.display = '';
-    checkBtn.style.display = '';
     revealBtn.style.display = 'none';
     guessInput.focus();
   }
 });
 
-// Nivå 3: Initiera papper-läget
+// Nivå 3: Initiera papper-läget (default = paper)
+// checkBtn ALLTID synlig — i paper-mode visar den facit direkt
 inputRow.style.display = 'none';
-checkBtn.style.display = 'none';
-revealBtn.style.display = '';
+revealBtn.style.display = 'none';
 
 // Nivå 3: Konfetti vid alla rätt
 function launchConfetti() {
@@ -512,6 +511,12 @@ function launchConfetti() {
 function checkGuess() {
   const word = words[currentIndex];
   const guess = normalize(guessInput.value);
+  // Paper-mode: visa facit direkt (för jämförelse med vad barnet skrev på pappret)
+  if (appMode === 'paper') {
+    feedbackEl.innerHTML = `<strong style="font-size:1.4rem">${escapeHtml(word.text)}</strong>`;
+    feedbackEl.className = 'feedback feedback-reveal';
+    return;
+  }
   if (!guess) {
     feedbackEl.textContent = 'Skriv ditt svar först';
     feedbackEl.className = 'feedback feedback-hint';
