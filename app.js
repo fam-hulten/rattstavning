@@ -37,7 +37,10 @@ const practiceAgainBtn = document.getElementById('practiceAgainBtn');
 const streakCounter = document.getElementById('streakCounter');
 const streakNum = document.getElementById('streakNum');
 const progressText = document.getElementById('progressText');
-const mode3sBtn = document.getElementById('mode3sBtn');
+const mode3sBtn = null; // Borttagen 2026-09-29
+const rattBtn = document.getElementById('rattBtn');
+const felBtn = document.getElementById('felBtn');
+const selfMarkRow = document.getElementById('selfMarkRow');
 const modeToggle = document.getElementById('modeToggle');
 const inputRow = document.querySelector('.input-row');
 const confettiCanvas = document.getElementById('confettiCanvas');
@@ -47,7 +50,7 @@ let wordStats = {}; // { [wordText]: { attempts: 0, correctCount: 0, lastResult:
 let usageStats = { sessions: 0, lastSession: null, totalWords: 0, daily: {} };
 const STATS_KEY = 'ratt-stats';
 let appMode = 'paper'; // 'paper' or 'app'
-let threeSecondTimer = null;
+let threeSecondTimer = null; // Borttagen 2026-09-29
 let needsResort = false; // true when a wrong answer requires re-sorting
 
 const allButtons = () => [listenBtn, repeatBtn, checkBtn, revealBtn, shareBtn, prevBtn, nextBtn];
@@ -278,6 +281,7 @@ function reveal() {
 }
 
 function nextWord() {
+  hideSelfMark();
   if (currentIndex < words.length - 1) {
     const card = document.querySelector('.card');
     card.classList.add('slide-out-left');
@@ -340,6 +344,8 @@ listenBtn.addEventListener('click', playAudio);
 repeatBtn.addEventListener('click', playAudio);
 checkBtn.addEventListener('click', checkGuess);
 revealBtn.addEventListener('click', reveal);
+rattBtn.addEventListener('click', markCorrect);
+felBtn.addEventListener('click', markWrong);
 shareBtn.addEventListener('click', shareApp);
 nextBtn.addEventListener('click', nextWord);
 prevBtn.addEventListener('click', prevWord);
@@ -394,22 +400,43 @@ dismissInstallBtn?.addEventListener('click', () => {
 shuffleBtn?.addEventListener('click', shuffleWords);
 practiceAgainBtn?.addEventListener('click', practiceAgain);
 
-// Nivå 3: 3-sekunder visningsläge
-mode3sBtn?.addEventListener('click', () => {
-  if (threeSecondTimer) return; // redan igång
+// Nivå 3: 3-sekunder visningsläge — BORTTAGEN 2026-09-29 (Johanna ville ha istället self-marking SML)
+// mode3sBtn-borttagen: använd Rätta + ✓ Rätt / ✗ Fel istället
+
+// Nivå 3: Self-marking (✓ Rätt / ✗ Fel) — visas efter Rätta
+function showSelfMark() {
+  if (selfMarkRow) selfMarkRow.hidden = false;
+}
+function hideSelfMark() {
+  if (selfMarkRow) selfMarkRow.hidden = true;
+}
+
+function markCorrect() {
   const word = words[currentIndex];
-  const orig = feedbackEl.innerHTML;
-  const origClass = feedbackEl.className;
-  feedbackEl.innerHTML = `<strong style="font-size:1.4rem">${escapeHtml(word.text)}</strong>`;
-  feedbackEl.className = 'feedback feedback-reveal';
-  mode3sBtn.disabled = true;
-  threeSecondTimer = setTimeout(() => {
-    feedbackEl.innerHTML = orig || '';
-    feedbackEl.className = origClass || 'feedback';
-    threeSecondTimer = null;
-    mode3sBtn.disabled = false;
-  }, 3000);
-});
+  const wKey = word.text;
+  if (!wordStats[wKey]) wordStats[wKey] = { attempts: 0, correctCount: 0, lastResult: null };
+  wordStats[wKey].attempts++;
+  wordStats[wKey].correctCount++;
+  wordStats[wKey].lastResult = 'correct';
+  saveStats();
+  hideSelfMark();
+  nextWord();
+}
+
+function markWrong() {
+  const word = words[currentIndex];
+  const wKey = word.text;
+  if (!wordStats[wKey]) wordStats[wKey] = { attempts: 0, correctCount: 0, lastResult: null };
+  wordStats[wKey].attempts++;
+  wordStats[wKey].lastResult = 'wrong';
+  saveStats();
+  needsResort = true;
+  // Flytta ordet till slutet av kön (repeat vid fel)
+  const [failedWord] = words.splice(currentIndex, 1);
+  words.push(failedWord);
+  hideSelfMark();
+  nextWord();
+}
 
 // Nivå 3: TTS med hel mening via Web Speech API (P1-förbättring)
 function playSentenceAudio() {
@@ -515,6 +542,7 @@ function checkGuess() {
   if (appMode === 'paper') {
     feedbackEl.innerHTML = `<strong style="font-size:1.4rem">${escapeHtml(word.text)}</strong>`;
     feedbackEl.className = 'feedback feedback-reveal';
+    showSelfMark();
     return;
   }
   if (!guess) {
@@ -539,6 +567,7 @@ function checkGuess() {
     if (streak === words.length) {
       setTimeout(launchConfetti, 300);
     }
+    showSelfMark();
   } else {
     // B29: Time-delay feedback — ge Zach chans att själv rätta innan facit
     const guessText = guessInput.value.trim();
@@ -577,6 +606,7 @@ function checkGuess() {
     setTimeout(() => {
       feedbackEl.innerHTML = `✗ Inte rätt.<br>Du skrev: <strong>${highlightedGuess}</strong><br>Rätt: <strong>${escapeHtml(correctText)}</strong>`;
       feedbackEl.className = 'feedback feedback-wrong';
+      showSelfMark();
     }, 3000);
   }
 }

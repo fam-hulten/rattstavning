@@ -22,7 +22,12 @@
   </header>
 
   <button id="revealBtn" class="primary reveal-main" aria-label="Visa rätt svar">👁 Visa ordet</button>
-  <button id="mode3sBtn" class="mode-btn" aria-label="Visa ordet i 3 sekunder">⏱ 3 sek</button>
+
+  <!-- Self-marking efter Rätta: ✓ Rätt / ✗ Fel (visas efter facit) -->
+  <div id="selfMarkRow" class="self-mark-row" hidden>
+    <button id="rattBtn" class="success self-mark-btn" aria-label="Jag skrev rätt">✓ Rätt</button>
+    <button id="felBtn" class="danger self-mark-btn" aria-label="Jag skrev fel">✗ Fel</button>
+  </div>
 
   <main class="card">
     <div class="streak-counter" id="streakCounter" aria-label="Radda rätt">🔥 <span id="streakNum">0</span></div>
@@ -75,8 +80,7 @@
     <p class="kbd-hint">
       <span class="kbd">←</span> <span class="kbd">→</span> navigera ·
       <span class="kbd">R</span> repetera ·
-      <span class="kbd">Enter</span> rätta ·
-      <span class="kbd">V</span> visa · Swipe vänster/höger
+      <span class="kbd">Enter</span> rätta · Swipe vänster/höger
     </p>
   </main>
 
