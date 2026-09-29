@@ -454,14 +454,20 @@ modeToggle?.addEventListener('click', e => {
   opt.classList.add('active');
   if (appMode === 'paper') {
     inputRow.style.display = 'none';
+    checkBtn.style.display = 'none';
+    revealBtn.style.display = '';
   } else {
     inputRow.style.display = '';
+    checkBtn.style.display = '';
+    revealBtn.style.display = 'none';
     guessInput.focus();
   }
 });
 
 // Nivå 3: Initiera papper-läget
 inputRow.style.display = 'none';
+checkBtn.style.display = 'none';
+revealBtn.style.display = '';
 
 // Nivå 3: Konfetti vid alla rätt
 function launchConfetti() {
