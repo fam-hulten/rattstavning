@@ -486,9 +486,10 @@ function markWrong() {
   const [failedWord] = words.splice(currentIndex, 1);
   words.push(failedWord);
   hideSelfMark();
-  // Efter splice+push: words[currentIndex] är nästa ord i kön (eller samma om wrap)
-  // Wrap till 0 om vi var på sista position (för att undvika infinite loop på sista ordet)
-  if (currentIndex >= words.length - 1) currentIndex = 0;
+  // Efter splice+push: failed word hamnar sist i kön.
+  // Om vi var på sista positionen pekar currentIndex nu på failed word igen,
+  // så användaren kan direkt försöka igen (utan att wrap till 0).
+  // Tidigare wrap till 0 tvingade om hela kön (buggfix 2026-09-29).
   updateUI();
   playAudio();
 }
