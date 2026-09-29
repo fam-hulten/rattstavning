@@ -435,7 +435,11 @@ function markWrong() {
   const [failedWord] = words.splice(currentIndex, 1);
   words.push(failedWord);
   hideSelfMark();
-  nextWord();
+  // Efter splice+push: words[currentIndex] är nästa ord i kön (eller samma om wrap)
+  // Wrap till 0 om vi var på sista position (för att undvika infinite loop på sista ordet)
+  if (currentIndex >= words.length - 1) currentIndex = 0;
+  updateUI();
+  playAudio();
 }
 
 // Nivå 3: TTS med hel mening via Web Speech API (P1-förbättring)
@@ -672,19 +676,6 @@ function updateUI() {
   }
   renderProgress();
   guessInput.focus();
-
-  // B30: Visa svårt-badge om ordet haft fel
-  const wKey = word.text;
-  const stats = wordStats[wKey];
-  const svartBadge = document.getElementById('svartBadge');
-  if (stats && stats.attempts > 0 && stats.lastResult === 'wrong') {
-    if (svartBadge) {
-      svartBadge.textContent = `⚠️ Svårt (${stats.attempts - stats.correctCount} fel av ${stats.attempts})`;
-      svartBadge.hidden = false;
-    }
-  } else if (svartBadge) {
-    svartBadge.hidden = true;
-  }
 }
 
 // Service worker registration
