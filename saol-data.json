@@ -1,170 +1,66 @@
 {
   "meta": {
-    "title": "Läxa för v. 36 — Klass 4 Lejonskolan",
+    "title": "Läxa för v. 40 — Klass 2A Lejonskolan",
     "subtitle": "Lyssna, se bilden, skriv ordet och jämför med facit",
     "school": "Lejonskolan",
-    "klass": "4"
+    "klass": "2A"
   },
   "words": [
     {
       "id": "01",
-      "text": "komplimang",
+      "text": "pöl",
       "audio": "audio/01.mp3",
       "image": "images/01.png",
-      "definition": "en fin och artig sak man säger till någon för att visa att man gillar det hen gör eller hur hen ser ut",
-      "synonyms": ["beröm", "lovord"],
-      "pronunciation": "kom-pli-mang",
-      "active": false,
-      "archived_at": "2026-09-06"
+      "definition": "en liten vattensamling på marken efter regn",
+      "synonyms": [
+        "vattenpuss"
+      ],
+      "pronunciation": "pöl"
     },
     {
       "id": "02",
-      "text": "ångra",
+      "text": "älv",
       "audio": "audio/02.mp3",
       "image": "images/02.png",
-      "definition": "känna att man ville ha gjort eller sagt något annorlunda",
-      "synonyms": ["känna ånger"],
-      "pronunciation": "ång-ra",
-      "active": false,
-      "archived_at": "2026-09-06"
+      "definition": "ett stort vattendrag som rinner genom landskapet",
+      "synonyms": [
+        "flod",
+        "ström"
+      ],
+      "pronunciation": "älv"
     },
     {
       "id": "03",
-      "text": "språng",
+      "text": "fors",
       "audio": "audio/03.mp3",
       "image": "images/03.png",
-      "definition": "ett snabbt hopp eller skutt där man kastar sig framåt",
-      "synonyms": ["hopp", "skutt"],
-      "pronunciation": "språng",
-      "active": false,
-      "archived_at": "2026-09-06"
+      "definition": "en sträcka där vattnet forsar fram snabbt",
+      "synonyms": [
+        "strömdrag"
+      ],
+      "pronunciation": "fors"
     },
     {
       "id": "04",
-      "text": "hälsning",
+      "text": "damm",
       "audio": "audio/04.mp3",
       "image": "images/04.png",
-      "definition": "ord eller meddelande man skickar till någon, ofta via en annan person",
-      "synonyms": ["meddelande", "hälsningsord"],
-      "pronunciation": "häls-ning",
-      "active": false,
-      "archived_at": "2026-09-06"
+      "definition": "en liten stillastående vattensamling, ofta med växter omkring",
+      "synonyms": [
+        "tjärn"
+      ],
+      "pronunciation": "damm"
     },
     {
       "id": "05",
-      "text": "blänka",
+      "text": "kanal",
       "audio": "audio/05.mp3",
       "image": "images/05.png",
-      "definition": "lysa eller glänsa starkt, som när solen speglar sig i vatten eller metall",
-      "synonyms": ["glänsa", "blixtra"],
-      "pronunciation": "blänk-a",
-      "active": false,
-      "archived_at": "2026-09-06"
-    },
-    {
-      "id": "06",
-      "text": "stänka",
-      "audio": "audio/06.mp3",
-      "image": "images/06.png",
-      "definition": "spruta vätska i små droppar, som när regnet studsar mot ett fönster",
-      "synonyms": ["skvätta", "stänka ner"],
-      "pronunciation": "stänk-a",
-      "active": false,
-      "archived_at": "2026-09-06"
-    },
-    {
-      "id": "07",
-      "text": "stinka",
-      "audio": "audio/07.mp3",
-      "image": "images/07.png",
-      "definition": "lukta mycket illa, som gammal fisk eller sopor",
-      "synonyms": ["oskiten", "vädras illa"],
-      "pronunciation": "stink-a",
-      "active": false,
-      "archived_at": "2026-09-06"
-    },
-    {
-      "id": "08",
-      "text": "sänka",
-      "audio": "audio/08.mp3",
-      "image": "images/08.png",
-      "definition": "flytta något nedåt eller göra det lägre; minska (t.ex. sänka priset)",
-      "synonyms": ["göra lägre", "sänka ner"],
-      "pronunciation": "sänk-a",
-      "active": false,
-      "archived_at": "2026-09-06"
-    },
-    {
-      "id": "09",
-      "text": "underlig",
-      "audio": "audio/09.mp3",
-      "image": "images/09.png",
-      "definition": "något som inte är som vanligt, konstigt eller oväntat på ett sätt som är svårt att förstå",
-      "synonyms": ["konstig", "märklig", "ovanlig"],
-      "pronunciation": "un-der-lig"
-    },
-    {
-      "id": "10",
-      "text": "försvann",
-      "audio": "audio/10.mp3",
-      "image": "images/10.png",
-      "definition": "fanns förut men syns inte längre, har blivit borta utan att man vet vart",
-      "synonyms": ["blev borta", "gick upp i rök"],
-      "pronunciation": "för-svann"
-    },
-    {
-      "id": "11",
-      "text": "minsann",
-      "audio": "audio/11.mp3",
-      "image": "images/11.png",
-      "definition": "ett gammaldags sätt att visa att man verkligen menar något, ofta när man är förvånad",
-      "synonyms": ["sannerligen"],
-      "pronunciation": "min-sann"
-    },
-    {
-      "id": "12",
-      "text": "avund",
-      "audio": "audio/12.mp3",
-      "image": "images/12.png",
-      "definition": "känsla av att man önskar att man hade det någon annan har, som en leksak eller en sak",
-      "synonyms": ["avundsjuka", "svartsjuka"],
-      "pronunciation": "a-vund"
-    },
-    {
-      "id": "13",
-      "text": "hann",
-      "audio": "audio/13.mp3",
-      "image": "images/13.png",
-      "definition": "hade tillräckligt med tid för att hinna göra något innan det var för sent",
-      "synonyms": ["hade tid", "kunde"],
-      "pronunciation": "hann"
-    },
-    {
-      "id": "14",
-      "text": "ändå",
-      "audio": "audio/14.mp3",
-      "image": "images/14.png",
-      "definition": "trots att det var svårt eller inte borde gå, så hände det ändå",
-      "synonyms": ["trots allt", "likväl"],
-      "pronunciation": "än-då"
-    },
-    {
-      "id": "15",
-      "text": "runt",
-      "audio": "audio/15.mp3",
-      "image": "images/15.png",
-      "definition": "i en cirkel omkring något, åt alla håll",
-      "synonyms": ["omkring", "runt omkring"],
-      "pronunciation": "runt"
-    },
-    {
-      "id": "16",
-      "text": "kant",
-      "audio": "audio/16.mp3",
-      "image": "images/16.png",
-      "definition": "den yttersta linjen eller sidan av något, där det tar slut",
-      "synonyms": ["sida", "gräns"],
-      "pronunciation": "kant"
+      "definition": "en människogjord vattenväg med raka kanter",
+      "synonyms": [
+        "vattenväg"
+      ],
+      "pronunciation": "ka-nal"
     }
   ]
 }

@@ -21,3 +21,7 @@ npm-debug.log*
 # Local config
 .env
 .env.localaudio.backup-v35-säg-ordet/
+images/*-ai-backup.png
+images/*-zachas-backup.png
+audio.backup-v35-säg-ordet/
+{audio,images,icons}/
