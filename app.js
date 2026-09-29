@@ -87,7 +87,20 @@ function loadStats() {
     const raw = localStorage.getItem(STATS_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
+      // Nollställ wordStats vid app-load — annars triggas completion view direkt
+      // vid webbläsar-refresh om förra sessionen hade alla ord korrekta.
+      // Dessutom undviks ackumulerade sessioner som ger missvisande
+      // "X av Y rätt direkt" (Johanna feedback 2026-09-29).
       if (parsed.wordStats) wordStats = parsed.wordStats;
+      if (parsed.wordStats) {
+        Object.keys(wordStats).forEach(w => {
+          if (wordStats[w]) {
+            wordStats[w].attempts = 0;
+            wordStats[w].correctCount = 0;
+            wordStats[w].lastResult = null;
+          }
+        });
+      }
       if (parsed.usageStats) usageStats = parsed.usageStats;
       if (parsed.streak) streak = parsed.streak;
     }
