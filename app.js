@@ -439,12 +439,12 @@ function showCompletionView() {
   if (card) card.style.display = 'none';
   const cv = document.getElementById('completionView');
   if (cv) cv.hidden = false;
-  // Uppdatera stats (rätt på första försöket / totalt)
+  // Uppdatera stats (rätt på första försöket / totalt för aktuell session)
   const totalAttempts = Object.values(wordStats).reduce((sum, s) => sum + s.attempts, 0);
   const totalCorrect = Object.values(wordStats).reduce((sum, s) => sum + s.correctCount, 0);
   const statsEl = document.getElementById('completionStats');
   if (statsEl) {
-    statsEl.textContent = `${words.length} ord — ${totalCorrect} av ${totalAttempts} rätt direkt`;
+    statsEl.textContent = `${totalCorrect} av ${totalAttempts} rätt direkt denna omgång`;
   }
   // Konfetti!
   if (typeof launchConfetti === 'function') launchConfetti();
@@ -456,8 +456,13 @@ function restartSession() {
   if (cv) cv.hidden = true;
   const card = document.querySelector('.card');
   if (card) card.style.display = '';
-  // Nollställ lastResult (för att "Allt klart" kan upptäckas igen)
-  Object.values(wordStats).forEach(s => { s.lastResult = null; });
+  // Nollställ ALLA wordStats (attempts/correctCount/lastResult) för ren session
+  // Annars ackumuleras siffrorna över tid och blir missvisande
+  Object.values(wordStats).forEach(s => {
+    s.attempts = 0;
+    s.correctCount = 0;
+    s.lastResult = null;
+  });
   saveStats();
   // Blanda orden
   for (let i = words.length - 1; i > 0; i--) {
