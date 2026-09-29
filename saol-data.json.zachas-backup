@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "title": "Läxa för v. 40 — Klass 2A Lejonskolan",
+    "subtitle": "Lyssna, se bilden, skriv ordet och jämför med facit",
+    "school": "Lejonskolan",
+    "klass": "2A"
+  },
+  "words": [
+    {
+      "id": "01",
+      "text": "pöl",
+      "audio": "audio/01.mp3",
+      "image": "images/01.png",
+      "definition": "en liten vattensamling på marken efter regn",
+      "synonyms": [
+        "vattensamling",
+        "vattenpuss"
+      ],
+      "pronunciation": "pöl"
+    },
+    {
+      "id": "02",
+      "text": "älv",
+      "audio": "audio/02.mp3",
+      "image": "images/02.png",
+      "definition": "ett stort vattendrag som rinner genom landskapet",
+      "synonyms": [
+        "flod",
+        "ström"
+      ],
+      "pronunciation": "älv"
+    },
+    {
+      "id": "03",
+      "text": "fors",
+      "audio": "audio/03.mp3",
+      "image": "images/03.png",
+      "definition": "en sträcka i en å eller älv där vattnet forsar fram snabbt",
+      "synonyms": [
+        "strömdrag",
+        "forsande vatten"
+      ],
+      "pronunciation": "fors"
+    },
+    {
+      "id": "04",
+      "text": "damm",
+      "audio": "audio/04.mp3",
+      "image": "images/04.png",
+      "definition": "en liten stillastående vattensamling, ofta med växter omkring",
+      "synonyms": [
+        "tjärn",
+        "vattensamling"
+      ],
+      "pronunciation": "damm"
+    },
+    {
+      "id": "05",
+      "text": "kanal",
+      "audio": "audio/05.mp3",
+      "image": "images/05.png",
+      "definition": "en människogjord vattenväg med raka kanter",
+      "synonyms": [
+        "vattenväg"
+      ],
+      "pronunciation": "ka-nal"
+    }
+  ]
+}
