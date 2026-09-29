@@ -346,6 +346,8 @@ checkBtn.addEventListener('click', checkGuess);
 revealBtn.addEventListener('click', reveal);
 rattBtn.addEventListener('click', markCorrect);
 felBtn.addEventListener('click', markWrong);
+const restartBtn = document.getElementById('restartBtn');
+restartBtn?.addEventListener('click', restartSession);
 shareBtn.addEventListener('click', shareApp);
 nextBtn.addEventListener('click', nextWord);
 prevBtn.addEventListener('click', prevWord);
@@ -420,7 +422,51 @@ function markCorrect() {
   wordStats[wKey].lastResult = 'correct';
   saveStats();
   hideSelfMark();
+
+  // Kolla om alla ord nu är rätt → visa Allt klart-vy
+  const allCorrect = words.every(w => wordStats[w.text]?.lastResult === 'correct');
+  if (allCorrect) {
+    showCompletionView();
+    return;
+  }
+
   nextWord();
+}
+
+function showCompletionView() {
+  hideSelfMark();
+  const card = document.querySelector('.card');
+  if (card) card.style.display = 'none';
+  const cv = document.getElementById('completionView');
+  if (cv) cv.hidden = false;
+  // Uppdatera stats (rätt på första försöket / totalt)
+  const totalAttempts = Object.values(wordStats).reduce((sum, s) => sum + s.attempts, 0);
+  const totalCorrect = Object.values(wordStats).reduce((sum, s) => sum + s.correctCount, 0);
+  const statsEl = document.getElementById('completionStats');
+  if (statsEl) {
+    statsEl.textContent = `${words.length} ord — ${totalCorrect} av ${totalAttempts} rätt direkt`;
+  }
+  // Konfetti!
+  if (typeof launchConfetti === 'function') launchConfetti();
+}
+
+function restartSession() {
+  // Dölj completion, visa kortet igen
+  const cv = document.getElementById('completionView');
+  if (cv) cv.hidden = true;
+  const card = document.querySelector('.card');
+  if (card) card.style.display = '';
+  // Nollställ lastResult (för att "Allt klart" kan upptäckas igen)
+  Object.values(wordStats).forEach(s => { s.lastResult = null; });
+  saveStats();
+  // Blanda orden
+  for (let i = words.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [words[i], words[j]] = [words[j], words[i]];
+  }
+  currentIndex = 0;
+  updateUI();
+  playAudio();
 }
 
 function markWrong() {

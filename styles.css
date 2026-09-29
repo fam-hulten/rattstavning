@@ -329,6 +329,56 @@ h1[contenteditable]:focus { background: var(--primary-soft); box-shadow: 0 0 0 2
   margin-bottom: 0.75rem;
 }
 
+/* Completion view: 🎉 När Allan ord av alla 5 ord! är klart */
+#completionView {
+  max-width: 640px;
+  margin: 2rem auto;
+  padding: 2.5rem 2rem;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+#completionView[hidden] {
+  display: none;
+}
+
+.completion-emoji {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+.completion-title {
+  font-size: 1.8rem;
+  margin: 0.5rem 0;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.completion-stats {
+  font-size: 1rem;
+  color: var(--muted);
+  margin: 0 0 1.5rem 0;
+  line-height: 1.4;
+}
+
+.restart-btn {
+  font-size: 1.05rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 10px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.restart-btn:hover {
+  background: #4338ca;
+}
+
 /* Nivå 3: Self-marking row (✓ Rätt / ✗ Fel) — visas efter Rätta */
 .self-mark-row {
   display: grid;
