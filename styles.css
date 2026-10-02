@@ -46,7 +46,56 @@ header {
   text-align: center;
   max-width: 620px;
   margin-bottom: 1.75rem;
+  position: relative;
 }
+
+/* v5: Refresh-data-knapp (Johanna-pushback 2026-10-02 07:12 — PWA stale data) */
+.refresh-link {
+  position: absolute;
+  right: 0;
+  top: 0.4rem;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  min-height: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.refresh-link:hover:not(:disabled) {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.refresh-link:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.refresh-link.is-success {
+  background: #d1fae5;
+  border-color: var(--success);
+  color: #065f46;
+}
+
+.refresh-link.is-error {
+  background: var(--danger-soft);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.refresh-link.is-loading .refresh-icon {
+  display: inline-block;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
 
 h1 {
   font-size: 1.5rem;
@@ -689,6 +738,10 @@ button.success:hover:not(:disabled) {
   min-height: auto;
 }
 
+/* v5: HTML-attributet hidden ska faktiskt gömma bannern (Johanna 2026-10-02 07:21).
+   Annars overrider .install-hint { display: flex } browser-default [hidden] = display:none. */
+.install-hint[hidden] { display: none; }
+
 @media (max-width: 480px) {
   body {
     padding-top: calc(1rem + env(safe-area-inset-top));
@@ -717,6 +770,8 @@ button.success:hover:not(:disabled) {
   header { margin-bottom: 0.6rem; }
   .progress-bar { margin-bottom: 0.5rem; }
   .counter { margin-bottom: 0.6rem; font-size: 0.7rem; }
+  .refresh-link { font-size: 0.78rem; padding: 0.35rem 0.6rem; }
+  .refresh-link .refresh-label { display: none; }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -736,6 +791,9 @@ button.success:hover:not(:disabled) {
   .feedback-hint { background: #334155; }
   button { background: #334155; color: var(--text); }
   button:hover:not(:disabled) { background: #475569; }
+  /* v5: Dark mode för refresh-link */
+  .refresh-link { background: transparent; color: var(--text-muted); border-color: var(--border); }
+  .refresh-link:hover:not(:disabled) { background: var(--primary-soft); color: var(--primary); border-color: var(--primary); }
 }
 /* B30: Svårt-badge för adaptiv svårighetsgrad */
 
